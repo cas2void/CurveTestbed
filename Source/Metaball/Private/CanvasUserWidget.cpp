@@ -16,6 +16,7 @@ TSharedRef<SWidget> UCanvasUserWidget::RebuildWidget()
 {
     UCanvasPanel* RootWidget = WidgetTree->ConstructWidget<UCanvasPanel>();
     UScaleBox* ScaleBox = WidgetTree->ConstructWidget<UScaleBox>();
+    ScaleBox->SetStretch(EStretch::ScaleToFit);  // Default
     UCanvasPanelSlot* CanvasPanelSlot = Cast<UCanvasPanelSlot>(RootWidget->AddChild(ScaleBox));
     if (CanvasPanelSlot)
     {
@@ -24,11 +25,16 @@ TSharedRef<SWidget> UCanvasUserWidget::RebuildWidget()
     }
 
     UImage* ImageWidget = WidgetTree->ConstructWidget<UImage>(UImage::StaticClass(), kRTImageName);
+    ImageWidget->SetBrushSize(ImageSize);
+    if (ImageMaterial.IsValid())
+    {
+        ImageWidget->SetBrushFromMaterial(ImageMaterial.Get());
+    }
     UScaleBoxSlot* ScaleBoxSlot = Cast<UScaleBoxSlot>(ScaleBox->AddChild(ImageWidget));
     if (ScaleBoxSlot)
     {
-        ScaleBoxSlot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Fill);
-        ScaleBoxSlot->SetVerticalAlignment(EVerticalAlignment::VAlign_Fill);
+        ScaleBoxSlot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Center);  // Default
+        ScaleBoxSlot->SetVerticalAlignment(EVerticalAlignment::VAlign_Center);      // Default
     }
 
     WidgetTree->RootWidget = RootWidget;
@@ -39,15 +45,14 @@ TSharedRef<SWidget> UCanvasUserWidget::RebuildWidget()
 void UCanvasUserWidget::NativeConstruct()
 {
     Super::NativeConstruct();
-
-    UImage* ImageWidget = WidgetTree->FindWidget<UImage>(kRTImageName);
-    if (ImageWidget && ImageMaterial.IsValid())
-    {
-        ImageWidget->SetBrushFromMaterial(ImageMaterial.Get());
-    }
 }
 
 void UCanvasUserWidget::SetImageMaterial(class UMaterialInterface* Material)
 {
     ImageMaterial = Material;
+}
+
+void UCanvasUserWidget::SetImageSize(const FIntPoint& Size)
+{
+    ImageSize = FVector2D(Size);
 }

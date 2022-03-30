@@ -26,8 +26,12 @@ protected:
 	//
 public:
 	void SetImageMaterial(class UMaterialInterface* Material);
+	void SetImageSize(const FIntPoint& Size);
 
 protected:
 	UPROPERTY()
 	TWeakObjectPtr<class UMaterialInterface> ImageMaterial;
+
+	UPROPERTY()
+	FVector2D ImageSize;
 };

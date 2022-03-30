@@ -13,6 +13,7 @@ AMetaballActor::AMetaballActor()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	VectorFieldRTs.Reserve(2);
 }
 
 // Called when the game starts or when spawned
@@ -20,12 +21,18 @@ void AMetaballActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	check(Material);
-	VectorFieldRTA = UKismetRenderingLibrary::CreateRenderTarget2D(this, 1280, 720, RTF_RGBA8, FLinearColor::Yellow);
-	MID = UMaterialInstanceDynamic::Create(Material, this);
-	MID->SetTextureParameterValue(FName("RT"), VectorFieldRTA);
+	check(UIMaterial);
+	MID = UMaterialInstanceDynamic::Create(UIMaterial, this);
+
+	for (int32 Index = 0; Index < 2; Index++)
+	{
+		UTextureRenderTarget2D* RT = UKismetRenderingLibrary::CreateRenderTarget2D(this, CanvasSize.X, CanvasSize.Y, RTF_RGBA8, FLinearColor::Yellow);
+		VectorFieldRTs.Add(RT);
+	}
+	MID->SetTextureParameterValue(FName("RT"), VectorFieldRTs[0]);
 
 	Canvas = CreateWidget<UCanvasUserWidget>(GetWorld());
+	Canvas->SetImageSize(CanvasSize);
 	Canvas->SetImageMaterial(MID);
 	Canvas->AddToViewport();
 }

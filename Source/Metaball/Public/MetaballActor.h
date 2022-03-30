@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Containers/StaticArray.h"
 #include "MetaballActor.generated.h"
 
 UCLASS()
@@ -28,14 +29,17 @@ public:
 	//
 protected:
 	UPROPERTY(EditAnywhere)
-	class UMaterialInterface* Material;
+	class UMaterialInterface* UIMaterial;
+
+	UPROPERTY(EditAnywhere)
+	FIntPoint CanvasSize = FIntPoint(1920, 1080);
 
 	UPROPERTY(VisibleAnywhere)
-	class UTextureRenderTarget2D* VectorFieldRTA;
+	TArray<class UTextureRenderTarget2D*> VectorFieldRTs;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY()
 	class UMaterialInstanceDynamic* MID;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY()
 	class UCanvasUserWidget* Canvas;
 };
