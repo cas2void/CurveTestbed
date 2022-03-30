@@ -12,10 +12,7 @@
 		{
 			"Name": "Metaball",
 			"Type": "Runtime",
-			"LoadingPhase": "Default",
-			"AdditionalDependencies": [
-				"UMG"
-			]
+			"LoadingPhase": "PostConfigInit"
 		}
 	]
 }

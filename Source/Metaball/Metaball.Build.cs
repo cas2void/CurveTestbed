@@ -34,7 +34,9 @@ public class Metaball : ModuleRules
 			{
 				"CoreUObject",
 				"Engine",
-				"UMG"
+				"UMG",
+				"RenderCore",
+				"RHI",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

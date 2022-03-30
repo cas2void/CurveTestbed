@@ -5,7 +5,9 @@
 
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Kismet/KismetRenderingLibrary.h"
+
 #include "CanvasUserWidget.h"
+#include "VectorFieldShader.h"
 
 // Sets default values
 AMetaballActor::AMetaballActor()
@@ -42,5 +44,13 @@ void AMetaballActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	FVectorFieldShaderParameter ShaderParams;
+
+	ENQUEUE_RENDER_COMMAND(VectorField)(
+		[this, ShaderParams](FRHICommandListImmediate& RHICmdList)
+		{
+			FVectorFieldShader::Render(RHICmdList, VectorFieldRTs[0], CanvasSize, ShaderParams);
+		}
+	);
 }
 

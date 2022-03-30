@@ -1,0 +1,6 @@
+#include "/Engine/Private/Common.ush"
+
+void MainPS(FScreenVertexOutput Input, out float4 OutColor : SV_Target0)
+{
+	OutColor = float4(Input.UV, 0, 1);
+}
