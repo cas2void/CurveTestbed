@@ -41,7 +41,7 @@ void AMetaballGenerator::Tick(float DeltaTime)
 
 void AMetaballGenerator::SetRenderTargetSize(FIntPoint Size)
 {
-	RenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(this, Size.X, Size.Y, RTF_RGBA8, FLinearColor::Yellow);
+	RenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(this, Size.X, Size.Y, RTF_RGBA16f, FLinearColor::Yellow);
 }
 
 #if WITH_EDITOR
