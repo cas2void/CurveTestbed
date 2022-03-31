@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Containers/StaticArray.h"
-#include "MetaballActor.generated.h"
+#include "Engine/TextureRenderTarget2D.h"
+#include "MetaballGenerator.generated.h"
 
 UCLASS()
-class METABALL_API AMetaballActor : public AActor
+class METABALL_API AMetaballGenerator: public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AMetaballActor();
+	AMetaballGenerator();
 
 protected:
 	// Called when the game starts or when spawned
@@ -27,13 +27,11 @@ public:
 	//
 	//
 	//
+public:
+	void SetRenderTargetSize(FIntPoint Size);
+	UTextureRenderTarget2D* GetRenderTarget() const { return RenderTarget; }
+
 protected:
-	UPROPERTY(EditAnywhere)
-	class UMaterialInterface* UIMaterial;
-
-	UPROPERTY(EditAnywhere)
-	FIntPoint CanvasSize = FIntPoint(1920, 1080);
-
 	UPROPERTY(EditAnywhere, meta = (UIMin = 0, UIMax = 1))
 	FVector Point0;
 
@@ -44,13 +42,7 @@ protected:
 	FVector Point2;
 
 	UPROPERTY(VisibleAnywhere)
-	TArray<class UTextureRenderTarget2D*> VectorFieldRTs;
-
-	UPROPERTY()
-	class UMaterialInstanceDynamic* MID;
-
-	UPROPERTY()
-	class UCanvasUserWidget* Canvas;
+	UTextureRenderTarget2D* RenderTarget;
 
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;

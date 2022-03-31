@@ -1,4 +1,4 @@
-#include "VectorFieldShader.h"
+#include "MetaballShader.h"
 
 #include "GlobalShader.h"
 #include "Modules/ModuleManager.h"
@@ -7,30 +7,44 @@
 #include "PipelineStateCache.h"
 #include "ScreenRendering.h"
 
-class FVectorFieldShaderPS : public FGlobalShader
+class FMetaballShaderPS : public FGlobalShader
 {
-    DECLARE_GLOBAL_SHADER(FVectorFieldShaderPS);
+    DECLARE_GLOBAL_SHADER(FMetaballShaderPS);
 
 public:
-    FVectorFieldShaderPS()
+    FMetaballShaderPS()
         : FGlobalShader()
     {
 
     }
 
-    FVectorFieldShaderPS(const ShaderMetaType::CompiledShaderInitializerType& Initializer)
+    FMetaballShaderPS(const ShaderMetaType::CompiledShaderInitializerType& Initializer)
         : FGlobalShader(Initializer)
     {
+        Point0Param.Bind(Initializer.ParameterMap, TEXT("Point0"));
+        Point1Param.Bind(Initializer.ParameterMap, TEXT("Point1"));
+        Point2Param.Bind(Initializer.ParameterMap, TEXT("Point2"));
+        AspectRatioParam.Bind(Initializer.ParameterMap, TEXT("AspectRatio"));
     }
 
-    void SetParameters(FRHICommandList& RHICmdList, const FVectorFieldShaderParameter& ShaderParams)
+    void SetParameters(FRHICommandList& RHICmdList, const FMetaballShaderParameter& ShaderParams)
     {
+        SetShaderValue(RHICmdList, RHICmdList.GetBoundPixelShader(), Point0Param, ShaderParams.Point0);
+        SetShaderValue(RHICmdList, RHICmdList.GetBoundPixelShader(), Point1Param, ShaderParams.Point1);
+        SetShaderValue(RHICmdList, RHICmdList.GetBoundPixelShader(), Point2Param, ShaderParams.Point2);
+        SetShaderValue(RHICmdList, RHICmdList.GetBoundPixelShader(), AspectRatioParam, ShaderParams.AspectRatio);
     }
+
+private:
+    LAYOUT_FIELD(FShaderParameter, Point0Param);
+    LAYOUT_FIELD(FShaderParameter, Point1Param);
+    LAYOUT_FIELD(FShaderParameter, Point2Param);
+    LAYOUT_FIELD(FShaderParameter, AspectRatioParam);
 };
 
-IMPLEMENT_GLOBAL_SHADER(FVectorFieldShaderPS, "/MetaballShaders/VectorFieldPS.usf", "MainPS", SF_Pixel);
+IMPLEMENT_GLOBAL_SHADER(FMetaballShaderPS, "/MetaballShaders/MetaballPS.usf", "MainPS", SF_Pixel);
 
-void FVectorFieldShader::Render(FRHICommandListImmediate& RHICmdList, UTextureRenderTarget2D* DestRT, const FIntPoint& Size, const FVectorFieldShaderParameter& ShaderParams)
+void FMetaballShader::Render(FRHICommandListImmediate& RHICmdList, UTextureRenderTarget2D* DestRT, const FIntPoint& Size, const FMetaballShaderParameter& ShaderParams)
 {
     if (DestRT && DestRT->GetRenderTargetResource())
     {
@@ -38,7 +52,7 @@ void FVectorFieldShader::Render(FRHICommandListImmediate& RHICmdList, UTextureRe
 
         IRendererModule* RendererModule = &FModuleManager::GetModuleChecked<IRendererModule>("Renderer");
         FRHIRenderPassInfo RPInfo(RHITexture, ERenderTargetActions::Load_Store);
-        RHICmdList.BeginRenderPass(RPInfo, TEXT("VectorField"));
+        RHICmdList.BeginRenderPass(RPInfo, TEXT("Metaball"));
         {
             RHICmdList.SetViewport(0, 0, 0, Size.X, Size.Y, 1);
 
@@ -50,7 +64,7 @@ void FVectorFieldShader::Render(FRHICommandListImmediate& RHICmdList, UTextureRe
 
             FGlobalShaderMap* ShaderMap = GetGlobalShaderMap(GMaxRHIFeatureLevel);
             TShaderMapRef<FScreenVS> VertexShader(ShaderMap);
-            TShaderMapRef<FVectorFieldShaderPS> PixelShader(ShaderMap);
+            TShaderMapRef<FMetaballShaderPS> PixelShader(ShaderMap);
             PixelShader->SetParameters(RHICmdList, ShaderParams);
 
             GraphicsPSOInit.BoundShaderState.VertexDeclarationRHI = GFilterVertexDeclaration.VertexDeclarationRHI;
