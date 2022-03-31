@@ -1,6 +1,24 @@
 #include "/Engine/Private/Common.ush"
 
+float3 Point0;
+float3 Point1;
+float3 Point2;
+float AspectRatio;
+
 void MainPS(FScreenVertexOutput Input, out float4 OutColor : SV_Target0)
 {
-	OutColor = float4(Input.UV, 0, 1);
+	float2 UVStrech = float2(AspectRatio, 1);
+	float dist0 = distance(Point0.xy * UVStrech, Input.UV * UVStrech);
+	float intensity0 = Point0.z / dist0;
+	
+	float dist1 = distance(Point1.xy * UVStrech, Input.UV * UVStrech);
+	float intensity1 = Point1.z / dist1;
+	
+	float dist2 = distance(Point2.xy * UVStrech, Input.UV * UVStrech);
+	float intensity2 = Point2.z / dist2;
+	
+	float intensity = intensity0 + intensity1 + intensity2;
+	intensity = min(intensity, 1);
+	
+	OutColor = float4(intensity, intensity, intensity, 1);
 }

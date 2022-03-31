@@ -45,6 +45,10 @@ void AMetaballActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	FVectorFieldShaderParameter ShaderParams;
+	ShaderParams.Point0 = Point0;
+	ShaderParams.Point1 = Point1;
+	ShaderParams.Point2 = Point2;
+	ShaderParams.AspectRatio = static_cast<float>(CanvasSize.X) / static_cast<float>(CanvasSize.Y);
 
 	ENQUEUE_RENDER_COMMAND(VectorField)(
 		[this, ShaderParams](FRHICommandListImmediate& RHICmdList)
@@ -54,3 +58,10 @@ void AMetaballActor::Tick(float DeltaTime)
 	);
 }
 
+#if WITH_EDITOR
+void AMetaballActor::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+
+}
+#endif

@@ -34,6 +34,15 @@ protected:
 	UPROPERTY(EditAnywhere)
 	FIntPoint CanvasSize = FIntPoint(1920, 1080);
 
+	UPROPERTY(EditAnywhere, meta = (UIMin = 0, UIMax = 1))
+	FVector Point0;
+
+	UPROPERTY(EditAnywhere, meta = (UIMin = 0, UIMax = 1))
+	FVector Point1;
+
+	UPROPERTY(EditAnywhere, meta = (UIMin = 0, UIMax = 1))
+	FVector Point2;
+
 	UPROPERTY(VisibleAnywhere)
 	TArray<class UTextureRenderTarget2D*> VectorFieldRTs;
 
@@ -42,4 +51,8 @@ protected:
 
 	UPROPERTY()
 	class UCanvasUserWidget* Canvas;
+
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 };

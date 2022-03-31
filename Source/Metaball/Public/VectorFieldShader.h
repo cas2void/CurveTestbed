@@ -6,7 +6,10 @@
 
 struct FVectorFieldShaderParameter
 {
-
+    FVector Point0;
+    FVector Point1;
+    FVector Point2;
+    float AspectRatio;
 };
 
 class METABALL_API FVectorFieldShader
