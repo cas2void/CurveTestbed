@@ -37,6 +37,10 @@ public class Metaball : ModuleRules
 				"UMG",
 				"RenderCore",
 				"RHI",
+				"UnrealEd",
+				"SlateCore",
+				"Slate",
+				"LevelEditor",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

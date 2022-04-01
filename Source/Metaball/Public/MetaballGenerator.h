@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Engine/TextureRenderTarget2D.h"
+#include "Curves/CurveLinearColor.h"
 #include "MetaballGenerator.generated.h"
 
 UCLASS()
@@ -19,6 +20,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void PostLoad() override;
 
 public:	
 	// Called every frame
@@ -30,6 +32,7 @@ public:
 public:
 	void SetRenderTargetSize(FIntPoint Size);
 	UTextureRenderTarget2D* GetRenderTarget() const { return RenderTarget; }
+	void Render();
 
 protected:
 	UPROPERTY(EditAnywhere, meta = (UIMin = 0, UIMax = 1))
@@ -40,6 +43,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, meta = (UIMin = 0, UIMax = 1))
 	FVector Point2;
+
+	UPROPERTY(VisibleAnywhere)
+	FRuntimeCurveLinearColor ColorRamp;
+
+	UPROPERTY(VisibleAnywhere, Transient)
+	class UTexture2D* ColorRampTexture;
 
 	UPROPERTY(VisibleAnywhere)
 	UTextureRenderTarget2D* RenderTarget;

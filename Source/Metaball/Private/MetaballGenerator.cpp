@@ -4,6 +4,7 @@
 #include "MetaballGenerator.h"
 
 #include "Kismet/KismetRenderingLibrary.h"
+#include "Engine/Texture2D.h"
 
 #include "MetaballShader.h"
 
@@ -11,7 +12,7 @@
 AMetaballGenerator::AMetaballGenerator()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 }
 
 // Called when the game starts or when spawned
@@ -20,11 +21,24 @@ void AMetaballGenerator::BeginPlay()
 	Super::BeginPlay();
 }
 
+void AMetaballGenerator::PostLoad()
+{
+	Super::PostLoad();
+}
+
 // Called every frame
 void AMetaballGenerator::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
 
+void AMetaballGenerator::SetRenderTargetSize(FIntPoint Size)
+{
+	RenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(this, Size.X, Size.Y, RTF_RGBA16f, FLinearColor::Yellow);
+}
+
+void AMetaballGenerator::Render()
+{
 	FMetaballShaderParameter ShaderParams;
 	ShaderParams.Point0 = Point0;
 	ShaderParams.Point1 = Point1;
@@ -37,11 +51,7 @@ void AMetaballGenerator::Tick(float DeltaTime)
 			FMetaballShader::Render(RHICmdList, RenderTarget, FIntPoint(RenderTarget->SizeX, RenderTarget->SizeY), ShaderParams);
 		}
 	);
-}
 
-void AMetaballGenerator::SetRenderTargetSize(FIntPoint Size)
-{
-	RenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(this, Size.X, Size.Y, RTF_RGBA16f, FLinearColor::Yellow);
 }
 
 #if WITH_EDITOR
