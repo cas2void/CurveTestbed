@@ -8,14 +8,6 @@
 			"Name": "CurveTestbed",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
-		},
-		{
-			"Name": "Metaball",
-			"Type": "Runtime",
-			"LoadingPhase": "PostConfigInit",
-			"AdditionalDependencies": [
-				"Engine"
-			]
 		}
 	],
 	"Plugins": [
