@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "Engine/TextureRenderTarget2D.h"
 #include "BufferPresentable.generated.h"
 
 // This class does not need to be modified.
@@ -22,4 +23,5 @@ class BUFFERPRESENTER_API IBufferPresentable
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	virtual UTextureRenderTarget2D* GetBuffer() = 0;
 };
