@@ -38,7 +38,6 @@ public class BufferPresenterEditor : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-				"PropertyEditor",
 				"BufferPresenter",
 				// ... add private dependencies that you statically link with here ...	
 			}
