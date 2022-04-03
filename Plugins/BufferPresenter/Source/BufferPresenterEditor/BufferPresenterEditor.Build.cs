@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class BufferPresenter : ModuleRules
+public class BufferPresenterEditor : ModuleRules
 {
-	public BufferPresenter(ReadOnlyTargetRules Target) : base(Target)
+	public BufferPresenterEditor(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
@@ -36,6 +36,8 @@ public class BufferPresenter : ModuleRules
 			{
 				"CoreUObject",
 				"Engine",
+				"Slate",
+				"SlateCore",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

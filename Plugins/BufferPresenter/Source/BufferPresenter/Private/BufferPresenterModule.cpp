@@ -1,6 +1,6 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "BufferPresenter.h"
+#include "BufferPresenterModule.h"
 
 #define LOCTEXT_NAMESPACE "FBufferPresenterModule"
 
