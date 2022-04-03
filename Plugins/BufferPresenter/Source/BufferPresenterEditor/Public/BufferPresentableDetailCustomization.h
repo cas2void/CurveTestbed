@@ -12,7 +12,7 @@
 class BUFFERPRESENTEREDITOR_API FBufferPresentableDetailCustomization : public IDetailCustomization
 {
 public:
-	virtual void CustomizeDetails(IDetailLayoutBuilder& DetailBuilder);
+    virtual void CustomizeDetails(IDetailLayoutBuilder& DetailBuilder);
 
-	static TSharedRef<IDetailCustomization> MakeInstance();
+    static TSharedRef<IDetailCustomization> MakeInstance();
 };

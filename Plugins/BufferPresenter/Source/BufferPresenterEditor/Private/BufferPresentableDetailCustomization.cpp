@@ -3,7 +3,13 @@
 
 #include "BufferPresentableDetailCustomization.h"
 
+#include "DetailCategoryBuilder.h"
+#include "DetailWidgetRow.h"
+#include "Internationalization/Internationalization.h"
+
 #include "BufferPresentable.h"
+
+#define LOCTEXT_NAMESPACE "FBufferPresentableDetailCustomization"
 
 void FBufferPresentableDetailCustomization::CustomizeDetails(IDetailLayoutBuilder& DetailBuilder)
 {
@@ -17,6 +23,25 @@ void FBufferPresentableDetailCustomization::CustomizeDetails(IDetailLayoutBuilde
             if (BufferPresentable)
             {
                 UE_LOG(LogTemp, Warning, TEXT("Selected BufferPresentable"));
+                IDetailCategoryBuilder& Cat = DetailBuilder.EditCategory(TEXT("CatName"));
+
+                auto OnRegenerate = [BufferPresentable]
+                {
+                    if (BufferPresentable)
+                    {
+                        UE_LOG(LogTemp, Warning, TEXT("Process BufferPresentable"));
+                    }
+
+                    return FReply::Handled();
+                };
+
+                Cat.AddCustomRow(LOCTEXT("MyButtonRowFilterString", "Search Filter Keywords"))
+                    .WholeRowContent()
+                    [
+                        SNew(SButton)
+                        .Text(LOCTEXT("RegenerateBtnText", "Regenerate List"))
+                        .OnClicked_Lambda(OnRegenerate)
+                    ];
             }
         }
     }
@@ -26,3 +51,5 @@ TSharedRef<IDetailCustomization> FBufferPresentableDetailCustomization::MakeInst
 {
     return MakeShareable(new FBufferPresentableDetailCustomization);
 }
+
+#undef LOCTEXT_NAMESPACE
