@@ -1,31 +1,29 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MetaballGenerator.h"
+#include "MetaballCoordinator.h"
+
+#include "MetaballGeneratorComponent.h"
 
 // Sets default values
-AMetaballGenerator::AMetaballGenerator()
+AMetaballCoordinator::AMetaballCoordinator()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	MetaballGenerator = CreateDefaultSubobject<UMetaballGeneratorComponent>(FName("MetaballGenerator"));
 }
 
 // Called when the game starts or when spawned
-void AMetaballGenerator::BeginPlay()
+void AMetaballCoordinator::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
 // Called every frame
-void AMetaballGenerator::Tick(float DeltaTime)
+void AMetaballCoordinator::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-}
-
-UTextureRenderTarget2D* AMetaballGenerator::GetBuffer()
-{
-	return nullptr;
 }

@@ -4,17 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "BufferPresentable.h"
-#include "MetaballGenerator.generated.h"
+#include "MetaballCoordinator.generated.h"
 
 UCLASS()
-class METABALL_API AMetaballGenerator : public AActor, public IBufferPresentable
+class METABALL_API AMetaballCoordinator : public AActor
 {
     GENERATED_BODY()
     
 public:    
     // Sets default values for this actor's properties
-    AMetaballGenerator();
+    AMetaballCoordinator();
 
 protected:
     // Called when the game starts or when spawned
@@ -27,6 +26,7 @@ public:
     //
     //
     //
-public:
-    virtual UTextureRenderTarget2D* GetBuffer() override;
+protected:
+    UPROPERTY(VisibleAnywhere)
+    class UMetaballGeneratorComponent* MetaballGenerator;
 };

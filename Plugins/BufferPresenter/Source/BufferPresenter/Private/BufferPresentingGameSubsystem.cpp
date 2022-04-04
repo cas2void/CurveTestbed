@@ -10,7 +10,3 @@ void UBufferPresentingGameSubsystem::Initialize(FSubsystemCollectionBase& Collec
 void UBufferPresentingGameSubsystem::Deinitialize()
 {
 }
-
-void UBufferPresentingGameSubsystem::PresentBuffer(IBufferPresentable* BufferPresentable)
-{
-}

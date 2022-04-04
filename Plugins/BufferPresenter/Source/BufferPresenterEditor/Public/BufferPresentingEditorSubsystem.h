@@ -4,9 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "EditorSubsystem.h"
-
-#include "BufferPresentable.h"
-
 #include "BufferPresentingEditorSubsystem.generated.h"
 
 /**
@@ -22,11 +19,5 @@ class BUFFERPRESENTEREDITOR_API UBufferPresentingEditorSubsystem : public UEdito
     //
 public:
     virtual void Initialize(FSubsystemCollectionBase& Collection) override;
-    virtual void Deinitialize() override;
-
-    //
-    //
-    //
-public:
-    void PresentBuffer(IBufferPresentable* BufferPresentable);   
+    virtual void Deinitialize() override; 
 };

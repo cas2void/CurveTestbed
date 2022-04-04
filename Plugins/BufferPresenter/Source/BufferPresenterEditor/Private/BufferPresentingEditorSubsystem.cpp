@@ -10,7 +10,3 @@ void UBufferPresentingEditorSubsystem::Initialize(FSubsystemCollectionBase& Coll
 void UBufferPresentingEditorSubsystem::Deinitialize()
 {
 }
-
-void UBufferPresentingEditorSubsystem::PresentBuffer(IBufferPresentable* BufferPresentable)
-{
-}
