@@ -36,8 +36,8 @@ public class Metaball : ModuleRules
 			{
 				"CoreUObject",
 				"Engine",
-				"BufferPresenter",
 				// ... add private dependencies that you statically link with here ...	
+				"BufferPresenter",
 			}
 			);
 		

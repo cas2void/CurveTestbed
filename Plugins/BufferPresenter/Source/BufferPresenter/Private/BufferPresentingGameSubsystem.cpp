@@ -10,3 +10,13 @@ void UBufferPresentingGameSubsystem::Initialize(FSubsystemCollectionBase& Collec
 void UBufferPresentingGameSubsystem::Deinitialize()
 {
 }
+
+void UBufferPresentingGameSubsystem::Present(UTextureRenderTarget2D* Buffer)
+{
+    UE_LOG(LogTemp, Warning, TEXT("UBufferPresentingGameSubsystem::Present"));
+}
+
+void UBufferPresentingGameSubsystem::Shutdown()
+{
+    UE_LOG(LogTemp, Warning, TEXT("UBufferPresentingGameSubsystem::Shutdown"));
+}

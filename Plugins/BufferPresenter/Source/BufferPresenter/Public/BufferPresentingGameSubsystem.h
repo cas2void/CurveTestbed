@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "Engine/TextureRenderTarget2D.h"
 #include "BufferPresentingGameSubsystem.generated.h"
 
 /**
@@ -20,4 +21,11 @@ class BUFFERPRESENTER_API UBufferPresentingGameSubsystem : public UGameInstanceS
 public:
     virtual void Initialize(FSubsystemCollectionBase& Collection) override;
     virtual void Deinitialize() override;
+
+    //
+    //
+    //
+public:
+    void Present(UTextureRenderTarget2D* Buffer);
+    void Shutdown();
 };
