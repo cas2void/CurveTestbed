@@ -40,6 +40,7 @@ public class BufferPresenterEditor : ModuleRules
 				"SlateCore",
 				// ... add private dependencies that you statically link with here ...	
 				"EditorSubsystem",
+				"LevelEditor",
 				"BufferPresenter",
 			}
 			);

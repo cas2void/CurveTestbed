@@ -18,9 +18,10 @@ struct BUFFERPRESENTER_API FBufferPresentingInfastructure
     UPROPERTY(Transient)
     UMaterialInstanceDynamic* BufferMID;
 
-    TSharedPtr<SWidget> FullscreenWidget;
-
+    UPROPERTY(Transient)
     FSlateBrush ImageBrush;
+
+    TSharedPtr<SWidget> FullscreenWidget;
 };
 
 UCLASS()
@@ -57,5 +58,6 @@ public:
 protected:
     void OnLevelRemovedFromWorld(class ULevel* InLevel, class UWorld* InWorld);
 
+    UPROPERTY(Transient)
     FBufferPresentingInfastructure BufferPresentingInfrastructure;
 };

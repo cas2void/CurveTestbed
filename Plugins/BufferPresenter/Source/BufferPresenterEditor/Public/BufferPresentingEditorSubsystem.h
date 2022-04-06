@@ -30,7 +30,10 @@ public:
     void Shutdown();
 
 protected:
+    TSharedPtr<class SOverlay> FindLevelViewportOverlay();
+
     void OnLevelRemovedFromWorld(class ULevel* InLevel, class UWorld* InWorld);
 
+    UPROPERTY(Transient)
     FBufferPresentingInfastructure BufferPresentingInfrastructure;
 };

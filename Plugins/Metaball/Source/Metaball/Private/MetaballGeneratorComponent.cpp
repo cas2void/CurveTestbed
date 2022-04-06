@@ -6,6 +6,7 @@
 #include "Engine/TextureRenderTarget2D.h"
 #include "Kismet/KismetRenderingLibrary.h"
 #include "Engine/GameInstance.h"
+#include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 
 #include "BufferPresentingGameSubsystem.h"
@@ -51,6 +52,12 @@ void UMetaballGeneratorComponent::Resize(const FIntPoint& Size)
     {
         RenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(this, Size.X, Size.Y, RTF_RGBA16f, FLinearColor::Blue);
         RenderTargetSize = Size;
+
+        UWorld* World = GetWorld();
+        if (World && World->IsGameWorld())
+        {
+            Present();
+        }
     }
 }
 
