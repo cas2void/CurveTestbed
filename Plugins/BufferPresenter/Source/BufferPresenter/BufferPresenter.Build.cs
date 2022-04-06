@@ -37,6 +37,8 @@ public class BufferPresenter : ModuleRules
 				"CoreUObject",
 				"Engine",
 				// ... add private dependencies that you statically link with here ...	
+				"SlateCore",
+				"Slate",
 			}
 			);
 		

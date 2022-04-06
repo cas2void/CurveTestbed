@@ -14,7 +14,10 @@ UCLASS()
 class BUFFERPRESENTER_API UBufferPresentingGameSubsystem : public UGameInstanceSubsystem
 {
     GENERATED_BODY()
-    
+
+public:
+    UBufferPresentingGameSubsystem();
+
     //
     // USubsystem Interfaces
     //
@@ -28,4 +31,18 @@ public:
 public:
     void Present(UTextureRenderTarget2D* Buffer);
     void Shutdown();
+
+protected:
+    void OnLevelRemovedFromWorld(class ULevel* InLevel, class UWorld* InWorld);
+
+    TSharedPtr<class SWidget> FullScreenWidget;
+    
+    //
+    // Image Brush
+    //
+protected:
+    UPROPERTY(Transient)
+    class UMaterialInstanceDynamic* BufferMID;
+
+    TSharedPtr<struct FSlateBrush> ImageBrush;
 };
