@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "EditorSubsystem.h"
+#include "BufferPresentingGameSubsystem.h"
 #include "BufferPresentingEditorSubsystem.generated.h"
 
 /**
@@ -19,5 +20,17 @@ class BUFFERPRESENTEREDITOR_API UBufferPresentingEditorSubsystem : public UEdito
     //
 public:
     virtual void Initialize(FSubsystemCollectionBase& Collection) override;
-    virtual void Deinitialize() override; 
+    virtual void Deinitialize() override;
+    
+    //
+    // Buffer Presenting
+    //
+public:
+    void Present(UTextureRenderTarget2D* Buffer);
+    void Shutdown();
+
+protected:
+    void OnLevelRemovedFromWorld(class ULevel* InLevel, class UWorld* InWorld);
+
+    FBufferPresentingInfastructure BufferPresentingInfrastructure;
 };

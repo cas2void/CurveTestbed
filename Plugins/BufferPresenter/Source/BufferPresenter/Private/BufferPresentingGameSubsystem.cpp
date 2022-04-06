@@ -3,34 +3,27 @@
 
 #include "BufferPresentingGameSubsystem.h"
 
-#include "UObject/ConstructorHelpers.h"
 #include "Materials/MaterialInterface.h"
-#include "Materials/MaterialInstanceDynamic.h"
 #include "Widgets/Layout/SConstraintCanvas.h"
 #include "Widgets/Layout/SScaleBox.h"
 #include "Widgets/Images/SImage.h"
-#include "Styling/SlateBrush.h"
 #include "Engine/World.h"
 #include "Engine/GameViewportClient.h"
 #include "Engine/Level.h"
 
-UBufferPresentingGameSubsystem::UBufferPresentingGameSubsystem()
-    : UGameInstanceSubsystem()
+void UBufferPresentingUtility::InitBufferPresentingInfrastructure(UObject* Outer, FBufferPresentingInfastructure& OutInfrastructure)
 {
-    ConstructorHelpers::FObjectFinder<UMaterialInterface> MaterialAsset(TEXT("Material'/BufferPresenter/UIM_BufferPresenter.UIM_BufferPresenter'"));
-    if (MaterialAsset.Succeeded())
+    static const FString kBufferMaterialPath(TEXT("Material'/BufferPresenter/UIM_BufferPresenter.UIM_BufferPresenter'"));
+    UMaterialInterface* BufferMaterial = LoadObject<UMaterialInterface>(nullptr, *kBufferMaterialPath);
+    if (!BufferMaterial)
     {
-        BufferMID = UMaterialInstanceDynamic::Create(MaterialAsset.Object, this, FName("BufferMID"));
+        UE_LOG(LogTemp, Error, TEXT("UBufferPresentingGameSubsystem::Initialize: %s NOT exsit"), *kBufferMaterialPath);
     }
-}
 
-void UBufferPresentingGameSubsystem::Initialize(FSubsystemCollectionBase& Collection)
-{
+    OutInfrastructure.BufferMID = UMaterialInstanceDynamic::Create(BufferMaterial, Outer);
+    OutInfrastructure.ImageBrush.SetResourceObject(OutInfrastructure.BufferMID);
+
     TSharedRef<SConstraintCanvas> ConstraintCanvas = SNew(SConstraintCanvas);
-
-    ImageBrush = MakeShared<FSlateBrush>();
-    ImageBrush->SetResourceObject(BufferMID);
-
     ConstraintCanvas->AddSlot()
         .Offset(FMargin(0, 0, 0, 0))
         .Anchors(FAnchors(0, 0, 1, 1))
@@ -40,11 +33,16 @@ void UBufferPresentingGameSubsystem::Initialize(FSubsystemCollectionBase& Collec
             .Stretch(EStretch::ScaleToFit)
             [
                 SNew(SImage)
-                .Image(ImageBrush.Get())
+                .Image(&OutInfrastructure.ImageBrush)
             ]
         ];
 
-    FullScreenWidget = ConstraintCanvas;
+    OutInfrastructure.FullscreenWidget = ConstraintCanvas;
+}
+
+void UBufferPresentingGameSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+{
+    UBufferPresentingUtility::InitBufferPresentingInfrastructure(this, BufferPresentingInfrastructure);
 }
 
 void UBufferPresentingGameSubsystem::Deinitialize()
@@ -53,8 +51,8 @@ void UBufferPresentingGameSubsystem::Deinitialize()
 
 void UBufferPresentingGameSubsystem::Present(UTextureRenderTarget2D* Buffer)
 {
-    ImageBrush->SetImageSize(FVector2D(Buffer->SizeX, Buffer->SizeY));
-    BufferMID->SetTextureParameterValue(FName("Buffer"), Buffer);
+    BufferPresentingInfrastructure.ImageBrush.SetImageSize(FVector2D(Buffer->SizeX, Buffer->SizeY));
+    BufferPresentingInfrastructure.BufferMID->SetTextureParameterValue(FName("Buffer"), Buffer);
 
     UWorld* World = GetWorld();
     if (World && World->IsGameWorld())
@@ -63,7 +61,7 @@ void UBufferPresentingGameSubsystem::Present(UTextureRenderTarget2D* Buffer)
         {
             // Use 10 as the zorder when adding to the viewport to avoid 
             // displaying below any built-in controls, like the virtual joysticks on mobile builds.
-            ViewportClient->AddViewportWidgetContent(FullScreenWidget.ToSharedRef(), 10);
+            ViewportClient->AddViewportWidgetContent(BufferPresentingInfrastructure.FullscreenWidget.ToSharedRef(), 10);
 
             FWorldDelegates::LevelRemovedFromWorld.RemoveAll(this);
             // Widgets added to the viewport are automatically removed if the persistent level is unloaded.
@@ -79,7 +77,7 @@ void UBufferPresentingGameSubsystem::Shutdown()
     {
         if (UGameViewportClient* ViewportClient = World->GetGameViewport())
         {
-            ViewportClient->RemoveViewportWidgetContent(FullScreenWidget.ToSharedRef());
+            ViewportClient->RemoveViewportWidgetContent(BufferPresentingInfrastructure.FullscreenWidget.ToSharedRef());
             FWorldDelegates::LevelRemovedFromWorld.RemoveAll(this);
         }
     }

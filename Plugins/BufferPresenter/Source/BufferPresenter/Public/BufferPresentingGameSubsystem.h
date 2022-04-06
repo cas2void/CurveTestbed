@@ -3,9 +3,34 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Materials/MaterialInstanceDynamic.h"
+#include "Widgets/SWidget.h"
+#include "Styling/SlateBrush.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "Engine/TextureRenderTarget2D.h"
 #include "BufferPresentingGameSubsystem.generated.h"
+
+USTRUCT()
+struct BUFFERPRESENTER_API FBufferPresentingInfastructure
+{
+    GENERATED_BODY()
+
+    UPROPERTY(Transient)
+    UMaterialInstanceDynamic* BufferMID;
+
+    TSharedPtr<SWidget> FullscreenWidget;
+
+    FSlateBrush ImageBrush;
+};
+
+UCLASS()
+class BUFFERPRESENTER_API UBufferPresentingUtility : public UObject
+{
+    GENERATED_BODY()
+
+public:
+    static void InitBufferPresentingInfrastructure(UObject* Outer, FBufferPresentingInfastructure& OutInfrastructure);
+};
 
 /**
  * 
@@ -15,9 +40,6 @@ class BUFFERPRESENTER_API UBufferPresentingGameSubsystem : public UGameInstanceS
 {
     GENERATED_BODY()
 
-public:
-    UBufferPresentingGameSubsystem();
-
     //
     // USubsystem Interfaces
     //
@@ -26,7 +48,7 @@ public:
     virtual void Deinitialize() override;
 
     //
-    //
+    // Buffer Presenting
     //
 public:
     void Present(UTextureRenderTarget2D* Buffer);
@@ -35,14 +57,5 @@ public:
 protected:
     void OnLevelRemovedFromWorld(class ULevel* InLevel, class UWorld* InWorld);
 
-    TSharedPtr<class SWidget> FullScreenWidget;
-    
-    //
-    // Image Brush
-    //
-protected:
-    UPROPERTY(Transient)
-    class UMaterialInstanceDynamic* BufferMID;
-
-    TSharedPtr<struct FSlateBrush> ImageBrush;
+    FBufferPresentingInfastructure BufferPresentingInfrastructure;
 };
