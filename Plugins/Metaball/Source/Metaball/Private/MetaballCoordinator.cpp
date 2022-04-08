@@ -27,8 +27,3 @@ void AMetaballCoordinator::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
-
-UTextureRenderTarget2D* AMetaballCoordinator::GetMetaGeneratorBuffer()
-{
-	return MetaballGenerator->GetBuffer();
-}

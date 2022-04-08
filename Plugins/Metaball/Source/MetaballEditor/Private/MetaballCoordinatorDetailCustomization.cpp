@@ -41,7 +41,7 @@ void FMetaballCoordinatorDetailCustomization::CustomizeDetails(IDetailLayoutBuil
             SNew(SButton)
             .HAlign(HAlign_Center)
             .Text(LOCTEXT("ShutdownText", "Shutdown"))
-            .OnClicked(this, &FMetaballCoordinatorDetailCustomization::OnShutDown)
+            .OnClicked(this, &FMetaballCoordinatorDetailCustomization::OnShutdown)
         ];
 }
 
@@ -56,7 +56,7 @@ FReply FMetaballCoordinatorDetailCustomization::OnMetaballGeneratorPresent()
             UBufferPresentingEditorSubsystem* BufferPresentingSubsystem = GEditor->GetEditorSubsystem<UBufferPresentingEditorSubsystem>();
             if (BufferPresentingSubsystem)
             {
-                BufferPresentingSubsystem->Present(MetaballCoordinator->GetMetaGeneratorBuffer());
+                BufferPresentingSubsystem->Present(MetaballCoordinator->GetMetaballGeneratorComponent()->GetBuffer());
             }
         }
     }
@@ -64,7 +64,7 @@ FReply FMetaballCoordinatorDetailCustomization::OnMetaballGeneratorPresent()
     return FReply::Handled();
 }
 
-FReply FMetaballCoordinatorDetailCustomization::OnShutDown()
+FReply FMetaballCoordinatorDetailCustomization::OnShutdown()
 {
     if (ObjectsBeingCustomized.Num() == 1)
     {

@@ -60,10 +60,7 @@ void UBufferPresentingGameSubsystem::Present(UTextureRenderTarget2D* Buffer)
         {
             // Prevent adding the same widget repeatedly.
             ViewportClient->RemoveViewportWidgetContent(BufferPresentingInfrastructure.FullscreenWidget.ToSharedRef());
-
-            // Use 10 as the zorder when adding to the viewport to avoid 
-            // displaying below any built-in controls, like the virtual joysticks on mobile builds.
-            ViewportClient->AddViewportWidgetContent(BufferPresentingInfrastructure.FullscreenWidget.ToSharedRef(), 10);
+            ViewportClient->AddViewportWidgetContent(BufferPresentingInfrastructure.FullscreenWidget.ToSharedRef());
 
             FWorldDelegates::LevelRemovedFromWorld.RemoveAll(this);
             // Widgets added to the viewport are automatically removed if the persistent level is unloaded.

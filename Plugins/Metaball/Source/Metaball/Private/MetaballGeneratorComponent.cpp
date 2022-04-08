@@ -32,8 +32,10 @@ void UMetaballGeneratorComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    // ...
-    Present();
+    // Present
+    UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(GetWorld());
+    UBufferPresentingGameSubsystem* BufferPresentingSubsystem = GameInstance->GetSubsystem<UBufferPresentingGameSubsystem>();
+    BufferPresentingSubsystem->Present(RenderTarget);
 }
 
 // Called every frame
@@ -53,11 +55,4 @@ void UMetaballGeneratorComponent::Resize(const FIntPoint& Size)
         RenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(this, Size.X, Size.Y, RTF_RGBA16f, FLinearColor::Blue);
         RenderTargetSize = Size;
     }
-}
-
-void UMetaballGeneratorComponent::Present()
-{
-    UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(GetWorld());
-    UBufferPresentingGameSubsystem* BufferPresentingSubsystem = GameInstance->GetSubsystem<UBufferPresentingGameSubsystem>();
-    BufferPresentingSubsystem->Present(RenderTarget);
 }

@@ -21,7 +21,7 @@ public:
 
 protected:
     FReply OnMetaballGeneratorPresent();
-    FReply OnShutDown();
+    FReply OnShutdown();
 
     TArray<TWeakObjectPtr<UObject>> ObjectsBeingCustomized;
 };

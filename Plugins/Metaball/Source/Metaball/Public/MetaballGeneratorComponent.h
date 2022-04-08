@@ -30,7 +30,6 @@ public:
     //
 public:
     void Resize(const FIntPoint& Size);
-    void Present();
     UTextureRenderTarget2D* GetBuffer() { return RenderTarget; }
 
 protected:

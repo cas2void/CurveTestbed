@@ -126,7 +126,6 @@ void UBufferPresentingEditorSubsystem::PresentInEditingMode(UTextureRenderTarget
     if (OverlayWidget.IsValid())
     {
         OverlayWidget->RemoveSlot(BufferPresentingInfrastructure.FullscreenWidget.ToSharedRef());
-
         OverlayWidget->AddSlot()
             .HAlign(HAlign_Fill)
             .VAlign(VAlign_Fill)
