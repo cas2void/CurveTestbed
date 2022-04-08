@@ -46,8 +46,7 @@ void UBufferPresentingGameSubsystem::Initialize(FSubsystemCollectionBase& Collec
 }
 
 void UBufferPresentingGameSubsystem::Deinitialize()
-{
-}
+{}
 
 void UBufferPresentingGameSubsystem::Present(UTextureRenderTarget2D* Buffer)
 {
@@ -84,6 +83,8 @@ void UBufferPresentingGameSubsystem::Shutdown()
             FWorldDelegates::LevelRemovedFromWorld.RemoveAll(this);
         }
     }
+
+    BufferPresentingInfrastructure.BufferMID->ClearParameterValues();
 }
 
 void UBufferPresentingGameSubsystem::OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld)

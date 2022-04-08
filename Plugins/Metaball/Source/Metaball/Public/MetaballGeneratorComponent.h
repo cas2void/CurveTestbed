@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Engine/TextureRenderTarget2D.h"
 #include "MetaballGeneratorComponent.generated.h"
 
 
@@ -30,11 +31,12 @@ public:
 public:
     void Resize(const FIntPoint& Size);
     void Present();
+    UTextureRenderTarget2D* GetBuffer() { return RenderTarget; }
 
 protected:
     UPROPERTY(EditAnywhere)
     FIntPoint RenderTargetSize = FIntPoint(1920, 1080);
 
     UPROPERTY(VisibleAnywhere, Transient)
-    class UTextureRenderTarget2D* RenderTarget;
+    UTextureRenderTarget2D* RenderTarget;
 };

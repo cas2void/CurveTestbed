@@ -31,8 +31,13 @@ public:
 
 protected:
     TSharedPtr<class SOverlay> FindLevelViewportOverlay();
+    
+    bool IsRunningGame(class UBufferPresentingGameSubsystem** OutGameSubsystem = nullptr);
+    void PresentInEditingMode(UTextureRenderTarget2D* Buffer);
+    void ShutdownInEditingMode();
 
-    void OnLevelRemovedFromWorld(class ULevel* InLevel, class UWorld* InWorld);
+    void OnStartGameInstance(class UGameInstance* GameInstance);
+    void OnWorldCleanup(class UWorld* World, bool bSessionEnded, bool bCleanupResources);
 
     UPROPERTY(Transient)
     FBufferPresentingInfastructure BufferPresentingInfrastructure;

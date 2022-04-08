@@ -52,12 +52,6 @@ void UMetaballGeneratorComponent::Resize(const FIntPoint& Size)
     {
         RenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(this, Size.X, Size.Y, RTF_RGBA16f, FLinearColor::Blue);
         RenderTargetSize = Size;
-
-        UWorld* World = GetWorld();
-        if (World && World->IsGameWorld())
-        {
-            Present();
-        }
     }
 }
 

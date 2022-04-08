@@ -27,6 +27,7 @@ public class BufferPresenterEditor : ModuleRules
 			{
 				"Core",
 				// ... add other public dependencies that you statically link with here ...
+				"EditorSubsystem",
 			}
 			);
 			
@@ -39,8 +40,8 @@ public class BufferPresenterEditor : ModuleRules
 				"Slate",
 				"SlateCore",
 				// ... add private dependencies that you statically link with here ...	
-				"EditorSubsystem",
 				"LevelEditor",
+				"UnrealEd",
 				"BufferPresenter",
 			}
 			);

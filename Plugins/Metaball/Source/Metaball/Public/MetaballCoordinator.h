@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Engine/TextureRenderTarget2D.h"
 #include "MetaballCoordinator.generated.h"
 
 UCLASS()
@@ -26,6 +27,9 @@ public:
     //
     //
     //
+public:
+    UTextureRenderTarget2D* GetMetaGeneratorBuffer();
+
 protected:
     UPROPERTY(VisibleAnywhere)
     class UMetaballGeneratorComponent* MetaballGenerator;
