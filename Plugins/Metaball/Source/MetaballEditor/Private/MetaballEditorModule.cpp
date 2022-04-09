@@ -6,6 +6,8 @@
 
 #include "MetaballCoordinator.h"
 #include "MetaballCoordinatorDetailCustomization.h"
+#include "MetaballGeneratorComponent.h"
+#include "MetaballGeneratorComponentDetailCustomization.h"
 
 #define LOCTEXT_NAMESPACE "FMetaballEditorModule"
 
@@ -14,6 +16,7 @@ void FMetaballEditorModule::StartupModule()
     // This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
     FPropertyEditorModule& PropertyEditorModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
     PropertyEditorModule.RegisterCustomClassLayout(AMetaballCoordinator::StaticClass()->GetFName(), FOnGetDetailCustomizationInstance::CreateStatic(&FMetaballCoordinatorDetailCustomization::MakeInstance));
+    PropertyEditorModule.RegisterCustomClassLayout(UMetaballGeneratorComponent::StaticClass()->GetFName(), FOnGetDetailCustomizationInstance::CreateStatic(&FMetaballGeneratorComponentDetailCustomization::MakeInstance));
 }
 
 void FMetaballEditorModule::ShutdownModule()
@@ -24,6 +27,7 @@ void FMetaballEditorModule::ShutdownModule()
     {
         FPropertyEditorModule& PropertyEditorModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
         PropertyEditorModule.UnregisterCustomClassLayout(AMetaballCoordinator::StaticClass()->GetFName());
+        PropertyEditorModule.UnregisterCustomClassLayout(UMetaballGeneratorComponent::StaticClass()->GetFName());
         PropertyEditorModule.NotifyCustomizationModuleChanged();
     }
 }
