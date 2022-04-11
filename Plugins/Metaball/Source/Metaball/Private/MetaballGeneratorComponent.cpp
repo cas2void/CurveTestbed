@@ -4,10 +4,15 @@
 #include "MetaballGeneratorComponent.h"
 
 #include "Engine/TextureRenderTarget2D.h"
+#include "Engine/Texture2DDynamic.h"
 #include "Kismet/KismetRenderingLibrary.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
+#include "TextureResource.h"
+#include "RHIResources.h"
+#include "RHICommandList.h"
+#include "RenderCommandFence.h"
 
 #include "BufferPresentingGameSubsystem.h"
 
@@ -24,7 +29,8 @@ void UMetaballGeneratorComponent::OnRegister()
 {
     Super::OnRegister();
 
-    Resize(RenderTargetSize);
+    ResizeBuffer(RenderTargetSize);
+    CreateColorRampTexture();
 }
 
 // Called when the game starts
@@ -46,7 +52,7 @@ void UMetaballGeneratorComponent::TickComponent(float DeltaTime, ELevelTick Tick
     // ...
 }
 
-void UMetaballGeneratorComponent::Resize(const FIntPoint& Size)
+void UMetaballGeneratorComponent::ResizeBuffer(const FIntPoint& Size)
 {
     if (!RenderTarget ||
         RenderTarget->SizeX != Size.X ||
@@ -54,5 +60,47 @@ void UMetaballGeneratorComponent::Resize(const FIntPoint& Size)
     {
         RenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(this, Size.X, Size.Y, RTF_RGBA16f, FLinearColor::Blue);
         RenderTargetSize = Size;
+    }
+}
+
+void UMetaballGeneratorComponent::CreateColorRampTexture()
+{
+    if (!ColorRampTexture)
+    {
+        FTexture2DDynamicCreateInfo CreateInfo(PF_B8G8R8A8, false, true, TF_Bilinear, AM_Clamp);
+        ColorRampTexture = UTexture2DDynamic::Create(256, 1, CreateInfo);
+
+        FRenderCommandFence Fence;
+        Fence.BeginFence();
+        Fence.Wait();
+        UpdateColorRampTexture();
+    }
+}
+
+void UMetaballGeneratorComponent::UpdateColorRampTexture()
+{
+    if (ColorRampTexture && ColorRampTexture->GetResource())
+    {
+        FRHITexture2D* RHITexture2D = ColorRampTexture->GetResource()->GetTexture2DRHI();
+        if (RHITexture2D)
+        {
+            ENQUEUE_RENDER_COMMAND(UpdateColorRampTexture)(
+                [RHITexture2D, this](FRHICommandListImmediate& RHICmdList)
+                {
+                    uint32 DestStride;
+                    FColor* Buffer = static_cast<FColor*>(RHILockTexture2D(RHITexture2D, 0, RLM_WriteOnly, DestStride, false));
+                    if (Buffer)
+                    {
+                        uint32 TextureWidth = RHITexture2D->GetSizeX();
+                        for (uint32 Index = 0; Index < TextureWidth; Index++)
+                        {
+                            float SampleTime = static_cast<float>(Index) / static_cast<float>(TextureWidth);
+                            FColor SampledColor = ColorRamp.GetLinearColorValue(SampleTime).ToFColor(false);
+                            Buffer[Index] = SampledColor;
+                        }
+                    }
+                    RHIUnlockTexture2D(RHITexture2D, 0, false);
+                });
+        }
     }
 }

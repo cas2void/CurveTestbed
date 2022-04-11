@@ -18,4 +18,9 @@ public:
     // IDetailCustomization Interfaces
     //
     virtual void CustomizeDetails(IDetailLayoutBuilder& DetailBuilder) override;
+
+protected:
+    void UpdateColorRampTexture(class UMetaballGeneratorComponent* MetaballGeneratorComponent);
+
+    FDelegateHandle ExternalCurveDelegateHandle;
 };

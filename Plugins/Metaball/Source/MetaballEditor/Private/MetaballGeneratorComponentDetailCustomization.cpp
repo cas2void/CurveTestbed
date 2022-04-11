@@ -50,8 +50,48 @@ void FMetaballGeneratorComponentDetailCustomization::CustomizeDetails(IDetailLay
                 RenderTargetSizeProperty->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda(OnPropetyValueChanged));
                 RenderTargetSizeProperty->SetOnChildPropertyValueChanged(FSimpleDelegate::CreateLambda(OnPropetyValueChanged));
             }
+
+            TSharedPtr<IPropertyHandle> ColorRampProperty = DetailBuilder.GetProperty(TEXT("ColorRamp"));
+            if (ColorRampProperty)
+            {
+                static TWeakObjectPtr<UCurveLinearColor> PreviousExternalCurve = MetaballGenerator->GetColorRamp().ExternalCurve;
+
+                auto OnPropertyValueChanged = [MetaballGenerator, this]()
+                {
+                    // Respond to external curve's OnUpdateCurve delegate.
+                    UCurveLinearColor* CurrentExternalCurve = MetaballGenerator->GetColorRamp().ExternalCurve;
+                    if (!PreviousExternalCurve.IsValid() || PreviousExternalCurve != CurrentExternalCurve)
+                    {
+                        if (PreviousExternalCurve.IsValid())
+                        {
+                            PreviousExternalCurve->OnUpdateCurve.Remove(ExternalCurveDelegateHandle);
+                        }
+
+                        if (CurrentExternalCurve)
+                        {
+                            auto OnExternalCurveValueChanged = [MetaballGenerator, this](UCurveBase* Curve, EPropertyChangeType::Type Type)
+                            {
+                                UpdateColorRampTexture(MetaballGenerator);
+                            };
+
+                            ExternalCurveDelegateHandle = MetaballGenerator->GetColorRamp().ExternalCurve->OnUpdateCurve.AddLambda(OnExternalCurveValueChanged);
+                        }
+
+                        PreviousExternalCurve = CurrentExternalCurve;
+                    }
+
+                    UpdateColorRampTexture(MetaballGenerator);
+                };
+
+                ColorRampProperty->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda(OnPropertyValueChanged));
+            }
         }
     }
+}
+
+void FMetaballGeneratorComponentDetailCustomization::UpdateColorRampTexture(UMetaballGeneratorComponent* MetaballGeneratorComponent)
+{
+    MetaballGeneratorComponent->UpdateColorRampTexture();
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Engine/TextureRenderTarget2D.h"
+#include "Curves/CurveLinearColor.h"
 #include "MetaballGeneratorComponent.generated.h"
 
 
@@ -26,16 +27,32 @@ public:
     virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
     //
-    //
+    // Buffer
     //
 public:
-    void Resize(const FIntPoint& Size);
+    void ResizeBuffer(const FIntPoint& Size);
     UTextureRenderTarget2D* GetBuffer() { return RenderTarget; }
 
 protected:
     UPROPERTY(EditAnywhere)
     FIntPoint RenderTargetSize = FIntPoint(1920, 1080);
 
-    UPROPERTY(VisibleAnywhere, Transient)
+    UPROPERTY(VisibleInstanceOnly, Transient, AdvancedDisplay)
     UTextureRenderTarget2D* RenderTarget;
+
+    //
+    // Ramp
+    //
+public:
+    void UpdateColorRampTexture();
+    const FRuntimeCurveLinearColor& GetColorRamp() const { return ColorRamp; }
+    
+protected:
+    void CreateColorRampTexture();
+
+    UPROPERTY(EditAnywhere)
+    FRuntimeCurveLinearColor ColorRamp;
+
+    UPROPERTY(VisibleInstanceOnly, Transient, AdvancedDisplay)
+    class UTexture2DDynamic* ColorRampTexture;
 };
