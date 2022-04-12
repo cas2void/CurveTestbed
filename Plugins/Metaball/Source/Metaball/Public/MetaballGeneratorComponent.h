@@ -71,4 +71,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, meta = (UIMin = 0, UIMax = 1))
 	FVector Point2;
+
+    UPROPERTY(EditAnywhere, meta = (UIMin = 1, UIMax = 1000))
+    float MaxIntensity = 10.0f;
 };

@@ -14,6 +14,8 @@ struct FMetaballGeneratorShaderParameter
     FVector Point1;
     FVector Point2;
     float AspectRatio;
+    float MaxIntensity;
+    TWeakObjectPtr<UTexture2DDynamic> ColorRampTexture;
 };
 
 /**
