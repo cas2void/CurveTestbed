@@ -55,4 +55,20 @@ protected:
 
     UPROPERTY(VisibleInstanceOnly, Transient, AdvancedDisplay)
     class UTexture2DDynamic* ColorRampTexture;
+
+    //
+    //
+    //
+protected:
+    UFUNCTION(CallInEditor)
+    void Render();
+
+    UPROPERTY(EditAnywhere, meta = (UIMin = 0, UIMax = 1))
+	FVector Point0;
+
+	UPROPERTY(EditAnywhere, meta = (UIMin = 0, UIMax = 1))
+	FVector Point1;
+
+	UPROPERTY(EditAnywhere, meta = (UIMin = 0, UIMax = 1))
+	FVector Point2;
 };

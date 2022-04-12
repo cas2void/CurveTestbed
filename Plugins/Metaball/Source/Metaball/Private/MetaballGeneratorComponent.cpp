@@ -4,16 +4,13 @@
 #include "MetaballGeneratorComponent.h"
 
 #include "Engine/TextureRenderTarget2D.h"
-#include "Engine/Texture2DDynamic.h"
 #include "Kismet/KismetRenderingLibrary.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
-#include "TextureResource.h"
-#include "RHIResources.h"
-#include "RHICommandList.h"
-#include "RenderCommandFence.h"
+#include "Engine/Texture2DDynamic.h"
 
+#include "MetaballGeneratorShader.h"
 #include "BufferPresentingGameSubsystem.h"
 
 // Sets default values for this component's properties
@@ -70,37 +67,24 @@ void UMetaballGeneratorComponent::CreateColorRampTexture()
         FTexture2DDynamicCreateInfo CreateInfo(PF_B8G8R8A8, false, true, TF_Bilinear, AM_Clamp);
         ColorRampTexture = UTexture2DDynamic::Create(256, 1, CreateInfo);
 
-        FRenderCommandFence Fence;
-        Fence.BeginFence();
-        Fence.Wait();
+        FMetaballGeneratorShader::WaitForGPU();
+
         UpdateColorRampTexture();
     }
 }
 
 void UMetaballGeneratorComponent::UpdateColorRampTexture()
 {
-    if (ColorRampTexture && ColorRampTexture->GetResource())
-    {
-        FRHITexture2D* RHITexture2D = ColorRampTexture->GetResource()->GetTexture2DRHI();
-        if (RHITexture2D)
-        {
-            ENQUEUE_RENDER_COMMAND(UpdateColorRampTexture)(
-                [RHITexture2D, this](FRHICommandListImmediate& RHICmdList)
-                {
-                    uint32 DestStride;
-                    FColor* Buffer = static_cast<FColor*>(RHILockTexture2D(RHITexture2D, 0, RLM_WriteOnly, DestStride, false));
-                    if (Buffer)
-                    {
-                        uint32 TextureWidth = RHITexture2D->GetSizeX();
-                        for (uint32 Index = 0; Index < TextureWidth; Index++)
-                        {
-                            float SampleTime = static_cast<float>(Index) / static_cast<float>(TextureWidth);
-                            FColor SampledColor = ColorRamp.GetLinearColorValue(SampleTime).ToFColor(false);
-                            Buffer[Index] = SampledColor;
-                        }
-                    }
-                    RHIUnlockTexture2D(RHITexture2D, 0, false);
-                });
-        }
-    }
+    FMetaballGeneratorShader::RenderColorRampToTexture(ColorRamp, ColorRampTexture);
+}
+
+void UMetaballGeneratorComponent::Render()
+{
+    FMetaballGeneratorShaderParameter ShaderParam;
+    ShaderParam.Point0 = Point0;
+    ShaderParam.Point1 = Point1;
+    ShaderParam.Point2 = Point2;
+    ShaderParam.AspectRatio = static_cast<float>(RenderTarget->SizeX) / static_cast<float>(RenderTarget->SizeY);
+
+    FMetaballGeneratorShader::RenderMetaball(RenderTarget, FIntPoint(RenderTarget->SizeX, RenderTarget->SizeY), ShaderParam);
 }

@@ -21,6 +21,11 @@
 			"LoadingPhase": "Default"
 		},
 		{
+			"Name": "MetaballShader",
+			"Type": "Runtime",
+			"LoadingPhase": "PostConfigInit"
+		},
+		{
 			"Name": "MetaballEditor",
 			"Type": "Editor",
 			"LoadingPhase": "PostEngineInit"
