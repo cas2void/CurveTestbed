@@ -4,12 +4,15 @@
 #include "BufferPresentingGameSubsystem.h"
 
 #include "Materials/MaterialInterface.h"
+#include "Widgets/SOverlay.h"
 #include "Widgets/Layout/SConstraintCanvas.h"
 #include "Widgets/Layout/SScaleBox.h"
 #include "Widgets/Images/SImage.h"
 #include "Engine/World.h"
 #include "Engine/GameViewportClient.h"
 #include "Engine/Level.h"
+
+static FSlateBrush GBlackBrush;
 
 void UBufferPresentingUtility::InitBufferPresentingInfrastructure(UObject* Outer, FBufferPresentingInfastructure& OutInfrastructure)
 {
@@ -23,17 +26,28 @@ void UBufferPresentingUtility::InitBufferPresentingInfrastructure(UObject* Outer
     OutInfrastructure.BufferMID = UMaterialInstanceDynamic::Create(BufferMaterial, Outer);
     OutInfrastructure.ImageBrush.SetResourceObject(OutInfrastructure.BufferMID);
 
+    GBlackBrush.TintColor = FSlateColor(FLinearColor::Black);
+
     TSharedRef<SConstraintCanvas> ConstraintCanvas = SNew(SConstraintCanvas);
     ConstraintCanvas->AddSlot()
         .Offset(FMargin(0, 0, 0, 0))
         .Anchors(FAnchors(0, 0, 1, 1))
         .Alignment(FVector2D(0, 0))
         [
-            SNew(SScaleBox)
-            .Stretch(EStretch::ScaleToFit)
+            SNew(SOverlay)
+            + SOverlay::Slot()
             [
                 SNew(SImage)
-                .Image(&OutInfrastructure.ImageBrush)
+                .Image(&GBlackBrush)
+            ]
+            + SOverlay::Slot()
+            [
+                SNew(SScaleBox)
+                .Stretch(EStretch::ScaleToFit)
+                [
+                    SNew(SImage)
+                    .Image(&OutInfrastructure.ImageBrush)
+                ]
             ]
         ];
 
