@@ -51,12 +51,81 @@ void FMetaballGeneratorComponentDetailCustomization::CustomizeDetails(IDetailLay
                 RenderTargetSizeProperty->SetOnChildPropertyValueChanged(FSimpleDelegate::CreateLambda(OnPropetyValueChanged));
             }
 
+            auto ToRenderMetaballLamda = [MetaballGenerator]()
+            {
+                MetaballGenerator->RenderMetbaball();
+            };
+
+            TSharedPtr<IPropertyHandle> Point0Property = DetailBuilder.GetProperty(TEXT("Point0"));
+            if (Point0Property)
+            {
+                // Set Min/Max
+                Point0Property->GetProperty()->SetMetaData(FName(TEXT("UIMin")), TEXT("0.0f"));
+                Point0Property->GetProperty()->SetMetaData(FName(TEXT("ClampMin")), TEXT("0.0f"));
+                Point0Property->GetProperty()->SetMetaData(FName(TEXT("UIMax")), TEXT("1.0f"));
+                Point0Property->GetProperty()->SetMetaData(FName(TEXT("ClampMax")), TEXT("1.0f"));
+
+                Point0Property->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda(ToRenderMetaballLamda));
+                Point0Property->SetOnChildPropertyValueChanged(FSimpleDelegate::CreateLambda(ToRenderMetaballLamda));
+            }
+
+            TSharedPtr<IPropertyHandle> Point1Property = DetailBuilder.GetProperty(TEXT("Point1"));
+            if (Point1Property)
+            {
+                // Set Min/Max
+                Point1Property->GetProperty()->SetMetaData(FName(TEXT("UIMin")), TEXT("0.0f"));
+                Point1Property->GetProperty()->SetMetaData(FName(TEXT("ClampMin")), TEXT("0.0f"));
+                Point1Property->GetProperty()->SetMetaData(FName(TEXT("UIMax")), TEXT("1.0f"));
+                Point1Property->GetProperty()->SetMetaData(FName(TEXT("ClampMax")), TEXT("1.0f"));
+
+                Point1Property->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda(ToRenderMetaballLamda));
+                Point1Property->SetOnChildPropertyValueChanged(FSimpleDelegate::CreateLambda(ToRenderMetaballLamda));
+            }
+
+            TSharedPtr<IPropertyHandle> Point2Property = DetailBuilder.GetProperty(TEXT("Point2"));
+            if (Point2Property)
+            {
+                // Set Min/Max
+                Point2Property->GetProperty()->SetMetaData(FName(TEXT("UIMin")), TEXT("0.0f"));
+                Point2Property->GetProperty()->SetMetaData(FName(TEXT("ClampMin")), TEXT("0.0f"));
+                Point2Property->GetProperty()->SetMetaData(FName(TEXT("UIMax")), TEXT("1.0f"));
+                Point2Property->GetProperty()->SetMetaData(FName(TEXT("ClampMax")), TEXT("1.0f"));
+
+                Point2Property->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda(ToRenderMetaballLamda));
+                Point2Property->SetOnChildPropertyValueChanged(FSimpleDelegate::CreateLambda(ToRenderMetaballLamda));
+            }
+
+            TSharedPtr<IPropertyHandle> MinIntensityProperty = DetailBuilder.GetProperty(TEXT("MinIntensity"));
+            if (MinIntensityProperty)
+            {
+                // Set Min/Max
+                MinIntensityProperty->GetProperty()->SetMetaData(FName(TEXT("UIMin")), TEXT("0.0f"));
+                MinIntensityProperty->GetProperty()->SetMetaData(FName(TEXT("ClampMin")), TEXT("0.0f"));
+                MinIntensityProperty->GetProperty()->SetMetaData(FName(TEXT("UIMax")), TEXT("10.0f"));
+                MinIntensityProperty->GetProperty()->SetMetaData(FName(TEXT("ClampMax")), TEXT("10.0f"));
+
+                MinIntensityProperty->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda(ToRenderMetaballLamda));
+            }
+
+            TSharedPtr<IPropertyHandle> MaxIntensityProperty = DetailBuilder.GetProperty(TEXT("MaxIntensity"));
+            if (MaxIntensityProperty)
+            {
+                // Set Min/Max
+                MaxIntensityProperty->GetProperty()->SetMetaData(FName(TEXT("UIMin")), TEXT("1.0f"));
+                MaxIntensityProperty->GetProperty()->SetMetaData(FName(TEXT("ClampMin")), TEXT("1.0f"));
+                MaxIntensityProperty->GetProperty()->SetMetaData(FName(TEXT("UIMax")), TEXT("1000.0f"));
+                MaxIntensityProperty->GetProperty()->SetMetaData(FName(TEXT("ClampMax")), TEXT("1000.0f"));
+
+                MaxIntensityProperty->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda(ToRenderMetaballLamda));
+            }
+
             TSharedPtr<IPropertyHandle> ColorRampProperty = DetailBuilder.GetProperty(TEXT("ColorRamp"));
             if (ColorRampProperty)
             {
                 auto OnPropertyValueChanged = [MetaballGenerator, this]()
                 {
                     MetaballGenerator->UpdateColorRampTexture();
+                    MetaballGenerator->RenderMetbaball();
                 };
 
                 ColorRampProperty->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda(OnPropertyValueChanged));

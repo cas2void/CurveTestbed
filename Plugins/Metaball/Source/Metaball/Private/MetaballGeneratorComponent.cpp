@@ -20,7 +20,6 @@ UMetaballGeneratorComponent::UMetaballGeneratorComponent()
     // off to improve performance if you don't need them.
     PrimaryComponentTick.bCanEverTick = true;
     // ...
-    bTickInEditor = true;
 }
 
 void UMetaballGeneratorComponent::OnRegister()
@@ -48,7 +47,6 @@ void UMetaballGeneratorComponent::TickComponent(float DeltaTime, ELevelTick Tick
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
     // ...
-    Render();
 }
 
 void UMetaballGeneratorComponent::ResizeBuffer(const FIntPoint& Size)
@@ -80,13 +78,14 @@ void UMetaballGeneratorComponent::UpdateColorRampTexture()
     FMetaballGeneratorShader::RenderColorRampToTexture(ColorRamp, ColorRampTexture);
 }
 
-void UMetaballGeneratorComponent::Render()
+void UMetaballGeneratorComponent::RenderMetbaball()
 {
     FMetaballGeneratorShaderParameter ShaderParam;
     ShaderParam.Point0 = Point0;
     ShaderParam.Point1 = Point1;
     ShaderParam.Point2 = Point2;
     ShaderParam.AspectRatio = static_cast<float>(RenderTarget->SizeX) / static_cast<float>(RenderTarget->SizeY);
+    ShaderParam.MinIntensity = MinIntensity;
     ShaderParam.MaxIntensity = MaxIntensity;
     ShaderParam.ColorRampTexture = ColorRampTexture;
 

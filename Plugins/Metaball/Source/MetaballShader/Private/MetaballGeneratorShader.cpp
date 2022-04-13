@@ -28,6 +28,7 @@ public:
         Point1Param.Bind(Initializer.ParameterMap, TEXT("Point1"));
         Point2Param.Bind(Initializer.ParameterMap, TEXT("Point2"));
         AspectRatioParam.Bind(Initializer.ParameterMap, TEXT("AspectRatio"));
+        MinIntensityParam.Bind(Initializer.ParameterMap, TEXT("MinIntensity"));
         MaxIntensityParam.Bind(Initializer.ParameterMap, TEXT("MaxIntensity"));
         ColorRampTextureParam.Bind(Initializer.ParameterMap, TEXT("ColorRampTexture"));
         ColorRampTextureSamplerParam.Bind(Initializer.ParameterMap, TEXT("ColorRampTextureSampler"));
@@ -39,6 +40,7 @@ public:
         SetShaderValue(RHICmdList, RHICmdList.GetBoundPixelShader(), Point1Param, ShaderParam.Point1);
         SetShaderValue(RHICmdList, RHICmdList.GetBoundPixelShader(), Point2Param, ShaderParam.Point2);
         SetShaderValue(RHICmdList, RHICmdList.GetBoundPixelShader(), AspectRatioParam, ShaderParam.AspectRatio);
+        SetShaderValue(RHICmdList, RHICmdList.GetBoundPixelShader(), MinIntensityParam, ShaderParam.MinIntensity);
         SetShaderValue(RHICmdList, RHICmdList.GetBoundPixelShader(), MaxIntensityParam, ShaderParam.MaxIntensity);
         if (ShaderParam.ColorRampTexture.IsValid())
         {
@@ -52,6 +54,7 @@ private:
     LAYOUT_FIELD(FShaderParameter, Point1Param);
     LAYOUT_FIELD(FShaderParameter, Point2Param);
     LAYOUT_FIELD(FShaderParameter, AspectRatioParam);
+    LAYOUT_FIELD(FShaderParameter, MinIntensityParam);
     LAYOUT_FIELD(FShaderParameter, MaxIntensityParam);
     LAYOUT_FIELD(FShaderResourceParameter, ColorRampTextureParam);
     LAYOUT_FIELD(FShaderResourceParameter, ColorRampTextureSamplerParam);

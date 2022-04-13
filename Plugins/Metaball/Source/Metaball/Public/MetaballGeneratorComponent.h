@@ -59,19 +59,22 @@ protected:
     //
     //
     //
-protected:
-    UFUNCTION(CallInEditor)
-    void Render();
+public:
+    void RenderMetbaball();
 
-    UPROPERTY(EditAnywhere, meta = (UIMin = 0, UIMax = 1))
+protected:
+    UPROPERTY(EditAnywhere)
 	FVector Point0;
 
-	UPROPERTY(EditAnywhere, meta = (UIMin = 0, UIMax = 1))
+	UPROPERTY(EditAnywhere)
 	FVector Point1;
 
-	UPROPERTY(EditAnywhere, meta = (UIMin = 0, UIMax = 1))
+	UPROPERTY(EditAnywhere)
 	FVector Point2;
 
-    UPROPERTY(EditAnywhere, meta = (UIMin = 1, UIMax = 1000))
+    UPROPERTY(EditAnywhere)
+    float MinIntensity = 0.0f;
+
+    UPROPERTY(EditAnywhere)
     float MaxIntensity = 10.0f;
 };
