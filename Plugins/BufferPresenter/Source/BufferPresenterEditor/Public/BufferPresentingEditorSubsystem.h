@@ -31,6 +31,7 @@ public:
 
 protected:
     TSharedPtr<class SOverlay> FindLevelViewportOverlay();
+    TSharedPtr<class SWidget> FindChildWidgetOfType(TSharedRef<class SWidget> Widget, const TArray<FString>& TypeStringPath);
     
     bool IsRunningGame(class UBufferPresentingGameSubsystem** OutGameSubsystem = nullptr);
     void PresentInEditingMode(UTextureRenderTarget2D* Buffer);

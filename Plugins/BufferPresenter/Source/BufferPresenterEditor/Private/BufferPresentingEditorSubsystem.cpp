@@ -3,10 +3,11 @@
 
 #include "BufferPresentingEditorSubsystem.h"
 
-#include "Widgets/SOverlay.h"
 #include "LevelEditor.h"
 #include "SLevelViewport.h"
 #include "Widgets/SViewport.h"
+#include "Layout/Children.h"
+#include "Widgets/SOverlay.h"
 #include "Engine/Engine.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
@@ -52,26 +53,6 @@ void UBufferPresentingEditorSubsystem::Shutdown()
     }
 }
 
-static TSharedPtr<SOverlay> FindOverlayRecursive(TSharedRef<SWidget> Widget)
-{
-    if (Widget->GetTypeAsString().Equals("SOverlay"))
-    {
-        return StaticCastSharedRef<SOverlay>(Widget);
-    }
-
-    TSharedPtr<SOverlay> Result;
-    for (int Index = 0; Index < Widget->GetChildren()->Num(); Index++)
-    {
-        Result = FindOverlayRecursive(Widget->GetChildren()->GetChildAt(Index));
-        if (Result.IsValid())
-        {
-            break;
-        }
-    }
-
-    return Result;
-}
-
 TSharedPtr<SOverlay> UBufferPresentingEditorSubsystem::FindLevelViewportOverlay()
 {
     TSharedPtr<SOverlay> Result;
@@ -81,7 +62,48 @@ TSharedPtr<SOverlay> UBufferPresentingEditorSubsystem::FindLevelViewportOverlay(
 
     if (LevelViewport.IsValid() && LevelViewport->GetViewportWidget().IsValid())
     {
-        Result = FindOverlayRecursive(LevelViewport->GetViewportWidget().Pin().ToSharedRef());
+        TArray<FString> TypeStringPath = { "SOverlay", "SGameLayerManager", "SDPIScaler", "SVerticalBox", "SOverlay" };
+        TSharedPtr<SWidget> FoundWidget = FindChildWidgetOfType(LevelViewport->GetViewportWidget().Pin().ToSharedRef(), TypeStringPath);
+        Result = StaticCastSharedPtr<SOverlay>(FoundWidget);
+    }
+
+    return Result;
+}
+
+TSharedPtr<SWidget> UBufferPresentingEditorSubsystem::FindChildWidgetOfType(TSharedRef<SWidget> Widget, const TArray<FString>& TypeStringPath)
+{
+    TSharedPtr<SWidget> Result;
+
+    if (TypeStringPath.Num() > 0)
+    {
+        Result = Widget;
+
+        for (const auto& TypeString : TypeStringPath)
+        {
+            bool bNotFound = true;
+
+            FChildren* Children = Result->GetChildren();
+            if (Children)
+            {
+                for (int Index = 0; Index < Children->Num(); Index++)
+                {
+                    TSharedRef<SWidget> Child = Children->GetChildAt(Index);
+                    if (Child->GetTypeAsString().Equals(TypeString, ESearchCase::IgnoreCase))
+                    {
+                        Result = Child;
+                        bNotFound = false;
+                        break;
+                    }
+                }
+            }
+
+            // Quit if any type string in the path is not found
+            if (bNotFound)
+            {
+                Result = nullptr;
+                break;
+            }
+        }
     }
 
     return Result;
