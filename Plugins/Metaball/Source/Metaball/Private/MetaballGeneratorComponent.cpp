@@ -35,6 +35,8 @@ void UMetaballGeneratorComponent::BeginPlay()
 {
     Super::BeginPlay();
 
+    RenderMetbaball();
+
     // Present
     UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(GetWorld());
     UBufferPresentingGameSubsystem* BufferPresentingSubsystem = GameInstance->GetSubsystem<UBufferPresentingGameSubsystem>();
@@ -85,8 +87,6 @@ void UMetaballGeneratorComponent::RenderMetbaball()
     ShaderParam.Point1 = Point1;
     ShaderParam.Point2 = Point2;
     ShaderParam.AspectRatio = static_cast<float>(RenderTarget->SizeX) / static_cast<float>(RenderTarget->SizeY);
-    ShaderParam.MinIntensity = MinIntensity;
-    ShaderParam.MaxIntensity = MaxIntensity;
     ShaderParam.ColorRampTexture = ColorRampTexture;
 
     FMetaballGeneratorShader::RenderMetaball(RenderTarget, FIntPoint(RenderTarget->SizeX, RenderTarget->SizeY), ShaderParam);

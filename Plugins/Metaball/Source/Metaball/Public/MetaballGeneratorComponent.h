@@ -71,10 +71,4 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	FVector Point2;
-
-    UPROPERTY(EditAnywhere)
-    float MinIntensity = 0.0f;
-
-    UPROPERTY(EditAnywhere)
-    float MaxIntensity = 10.0f;
 };

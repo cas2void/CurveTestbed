@@ -31,8 +31,8 @@ void FMetaballCoordinatorDetailCustomization::CustomizeDetails(IDetailLayoutBuil
         [
             SNew(SButton)
             .HAlign(HAlign_Center)
-        .Text(LOCTEXT("PresentText", "Present Metaball Generator"))
-        .OnClicked(this, &FMetaballCoordinatorDetailCustomization::OnMetaballGeneratorPresent)
+            .Text(LOCTEXT("PresentText", "Present Metaball Generator"))
+            .OnClicked(this, &FMetaballCoordinatorDetailCustomization::OnMetaballGeneratorPresent)
         ];
 
     CategoryBuilder.AddCustomRow(LOCTEXT("BufferPresentingFiltering", "Buffer Presenting"))
@@ -53,6 +53,7 @@ FReply FMetaballCoordinatorDetailCustomization::OnMetaballGeneratorPresent()
 
         if (MetaballCoordinator)
         {
+            MetaballCoordinator->GetMetaballGeneratorComponent()->RenderMetbaball();
             UBufferPresentingEditorSubsystem* BufferPresentingSubsystem = GEditor->GetEditorSubsystem<UBufferPresentingEditorSubsystem>();
             if (BufferPresentingSubsystem)
             {
