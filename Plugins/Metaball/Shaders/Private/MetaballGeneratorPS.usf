@@ -7,18 +7,18 @@ float AspectRatio;
 Texture2D ColorRampTexture;
 SamplerState ColorRampTextureSampler;
 
-float Metaball(float2 Position, float Radius)
+float Metaball(float2 Position, float2 Center, float Radius)
 {
-	return Radius / sqrt(dot(Position, Position));
+	float2 UVStrech = float2(AspectRatio, 1);
+	
+	return Radius / length((Position - Center) * UVStrech);
 }
 
 void MainPS(FScreenVertexOutput Input, out float4 OutColor : SV_Target0)
 {
-	float2 UVStrech = float2(AspectRatio, 1);
-	
-	float intensity0 = Metaball((Point0.xy - Input.UV) * UVStrech, Point0.z);
-	float intensity1 = Metaball((Point1.xy - Input.UV) * UVStrech, Point1.z);
-	float intensity2 = Metaball((Point2.xy - Input.UV) * UVStrech, Point2.z);
+	float intensity0 = Metaball(Input.UV, Point0.xy, Point0.z);
+	float intensity1 = Metaball(Input.UV, Point1.xy, Point1.z);
+	float intensity2 = Metaball(Input.UV, Point2.xy, Point2.z);
 	
 	float intensity = intensity0 + intensity1 + intensity2;
 	float normalizedIntensity = saturate(intensity);
