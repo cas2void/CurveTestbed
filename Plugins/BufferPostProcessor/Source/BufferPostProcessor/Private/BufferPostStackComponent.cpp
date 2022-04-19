@@ -52,11 +52,6 @@ void UBufferPostStackComponent::SetInput(UTextureRenderTarget2D* InputRT)
     }
 }
 
-UTextureRenderTarget2D* UBufferPostStackComponent::GetOutput()
-{
-    return Output;
-}
-
 void UBufferPostStackComponent::Process()
 {
     if (Input.IsValid() && Output)
