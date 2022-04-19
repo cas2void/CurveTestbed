@@ -44,6 +44,7 @@ public class MetaballEditor : ModuleRules
 				"Metaball",
 				"BufferPresenter",
 				"BufferPresenterEditor",
+				"BufferPostProcessor"
 			}
 			);
 		

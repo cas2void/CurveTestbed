@@ -20,6 +20,8 @@ void UBufferPresentingEditorSubsystem::Initialize(FSubsystemCollectionBase& Coll
 
     FWorldDelegates::OnStartGameInstance.RemoveAll(this);
     FWorldDelegates::OnStartGameInstance.AddUObject(this, &UBufferPresentingEditorSubsystem::OnStartGameInstance);
+
+    bPresenting = false;
 }
 
 void UBufferPresentingEditorSubsystem::Deinitialize()
@@ -50,6 +52,19 @@ void UBufferPresentingEditorSubsystem::Shutdown()
     else
     {
         ShutdownInEditingMode();
+    }
+}
+
+bool UBufferPresentingEditorSubsystem::IsPresenting()
+{
+    UBufferPresentingGameSubsystem* GameSubsystem;
+    if (IsRunningGame(&GameSubsystem))
+    {
+        return GameSubsystem->IsPresenting();
+    }
+    else
+    {
+        return bPresenting;
     }
 }
 
@@ -157,6 +172,8 @@ void UBufferPresentingEditorSubsystem::PresentInEditingMode(UTextureRenderTarget
 
         FWorldDelegates::OnWorldCleanup.RemoveAll(this);
         FWorldDelegates::OnWorldCleanup.AddUObject(this, &UBufferPresentingEditorSubsystem::OnWorldCleanup);
+
+        bPresenting = true;
     }
 }
 
@@ -168,6 +185,8 @@ void UBufferPresentingEditorSubsystem::ShutdownInEditingMode()
         OverlayWidget->RemoveSlot(BufferPresentingInfrastructure.FullscreenWidget.ToSharedRef());
 
         FWorldDelegates::OnWorldCleanup.RemoveAll(this);
+
+        bPresenting = false;
     }
 
     BufferPresentingInfrastructure.BufferMID->ClearParameterValues();

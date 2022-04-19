@@ -3,11 +3,7 @@
 
 #include "MetaballGeneratorComponent.h"
 
-#include "Engine/TextureRenderTarget2D.h"
 #include "Kismet/KismetRenderingLibrary.h"
-#include "Engine/GameInstance.h"
-#include "Engine/World.h"
-#include "Kismet/GameplayStatics.h"
 #include "Engine/Texture2DDynamic.h"
 
 #include "MetaballGeneratorShader.h"
@@ -26,7 +22,7 @@ void UMetaballGeneratorComponent::OnRegister()
 {
     Super::OnRegister();
 
-    ResizeBuffer(RenderTargetSize);
+    SetSize(RenderTargetSize);
     CreateColorRampTexture();
 }
 
@@ -35,12 +31,7 @@ void UMetaballGeneratorComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    RenderMetbaball();
-
-    // Present
-    UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(GetWorld());
-    UBufferPresentingGameSubsystem* BufferPresentingSubsystem = GameInstance->GetSubsystem<UBufferPresentingGameSubsystem>();
-    BufferPresentingSubsystem->Present(RenderTarget);
+    Process();
 }
 
 // Called every frame
@@ -51,14 +42,15 @@ void UMetaballGeneratorComponent::TickComponent(float DeltaTime, ELevelTick Tick
     // ...
 }
 
-void UMetaballGeneratorComponent::ResizeBuffer(const FIntPoint& Size)
+void UMetaballGeneratorComponent::SetSize(const FIntPoint& Size)
 {
-    if (!RenderTarget ||
-        RenderTarget->SizeX != Size.X ||
-        RenderTarget->SizeY != Size.Y)
+    if (Size.X > 0 && Size.Y > 0 &&
+        (!RenderTarget || RenderTarget->SizeX != Size.X || RenderTarget->SizeY != Size.Y))
     {
         RenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(this, Size.X, Size.Y, RTF_RGBA16f, FLinearColor::Blue);
         RenderTargetSize = Size;
+
+        ResizeBufferDelegate.Broadcast(RenderTargetSize);
     }
 }
 
@@ -80,7 +72,7 @@ void UMetaballGeneratorComponent::UpdateColorRampTexture()
     FMetaballGeneratorShader::RenderColorRampToTexture(ColorRamp, ColorRampTexture);
 }
 
-void UMetaballGeneratorComponent::RenderMetbaball()
+void UMetaballGeneratorComponent::Process()
 {
     FMetaballGeneratorShaderParameter ShaderParam;
     ShaderParam.Point0 = Point0;

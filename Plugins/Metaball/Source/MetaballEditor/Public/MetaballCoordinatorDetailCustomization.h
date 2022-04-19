@@ -20,7 +20,7 @@ public:
     virtual void CustomizeDetails(IDetailLayoutBuilder& DetailBuilder) override;
 
 protected:
-    FReply OnMetaballGeneratorPresent();
+    FReply OnMetaballPresent();
     FReply OnShutdown();
 
     TArray<TWeakObjectPtr<UObject>> ObjectsBeingCustomized;

@@ -35,6 +35,10 @@
 		{
 			"Name": "BufferPresenter",
 			"Enabled": true
+		},
+		{
+			"Name": "BufferPostProcessor",
+			"Enabled": true
 		}
 	]
 }

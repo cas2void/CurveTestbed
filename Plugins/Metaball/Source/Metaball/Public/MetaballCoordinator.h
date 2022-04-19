@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Engine/TextureRenderTarget2D.h"
 #include "MetaballGeneratorComponent.h"
+#include "BufferPostStackComponent.h"
 #include "MetaballCoordinator.generated.h"
 
 UCLASS()
@@ -26,12 +27,29 @@ public:
     virtual void Tick(float DeltaTime) override;
 
     //
-    //
+    // Components
     //
 public:
     UMetaballGeneratorComponent* GetMetaballGeneratorComponent() { return MetaballGenerator; }
+    UBufferPostStackComponent* GetBufferPostStackComponent() { return PostStack; }
+    FIntPoint GetRenderTargetSize() { return RenderTargetSize; }
 
 protected:
     UPROPERTY(VisibleAnywhere)
-    class UMetaballGeneratorComponent* MetaballGenerator;
+    UMetaballGeneratorComponent* MetaballGenerator;
+
+    UPROPERTY(VisibleAnywhere)
+    UBufferPostStackComponent* PostStack;
+
+    UPROPERTY(EditAnywhere)
+    FIntPoint RenderTargetSize = FIntPoint(1920, 1080);
+
+    void OnMetaballGeneratorResize(const FIntPoint& Size);
+    void OnPostStackResize(const FIntPoint& Size);
+
+    //
+    // Presenting
+    //
+protected:
+    class UBufferPresentingGameSubsystem* GetBufferPresentingSubsystem();
 };

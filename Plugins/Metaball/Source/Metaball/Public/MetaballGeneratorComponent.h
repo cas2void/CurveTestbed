@@ -30,15 +30,24 @@ public:
     // Buffer
     //
 public:
-    void ResizeBuffer(const FIntPoint& Size);
+    void SetSize(const FIntPoint& Size);
+
+    DECLARE_MULTICAST_DELEGATE_OneParam(FResizeBufferDelegate, const FIntPoint&)
+    FResizeBufferDelegate& OnResize() { return ResizeBufferDelegate; }
+
     UTextureRenderTarget2D* GetBuffer() { return RenderTarget; }
 
 protected:
-    UPROPERTY(EditAnywhere)
-    FIntPoint RenderTargetSize = FIntPoint(1920, 1080);
-
     UPROPERTY(VisibleInstanceOnly, Transient, AdvancedDisplay)
     UTextureRenderTarget2D* RenderTarget;
+
+    // Desired render target size, value set by SetSize() from caller.
+    // As member `RenderTarget` is Transient, it has to be checked and created in OnRegister(), 
+    // this Value need to be serialized for later use in render target creation.
+    UPROPERTY()
+    FIntPoint RenderTargetSize = FIntPoint(-1, -1);
+
+    FResizeBufferDelegate ResizeBufferDelegate;
 
     //
     // Ramp
@@ -57,10 +66,10 @@ protected:
     class UTexture2DDynamic* ColorRampTexture;
 
     //
-    //
+    // Metaball
     //
 public:
-    void RenderMetbaball();
+    void Process();
 
 protected:
     UPROPERTY(EditAnywhere)

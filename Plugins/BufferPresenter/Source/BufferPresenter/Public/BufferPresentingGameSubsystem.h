@@ -54,10 +54,14 @@ public:
 public:
     void Present(UTextureRenderTarget2D* Buffer);
     void Shutdown();
+    bool IsPresenting();
 
 protected:
     void OnLevelRemovedFromWorld(class ULevel* InLevel, class UWorld* InWorld);
 
     UPROPERTY(Transient)
     FBufferPresentingInfastructure BufferPresentingInfrastructure;
+
+    UPROPERTY(Transient)
+    bool bPresenting;
 };

@@ -28,6 +28,7 @@ public:
 public:
     void Present(UTextureRenderTarget2D* Buffer);
     void Shutdown();
+    bool IsPresenting();
 
 protected:
     TSharedPtr<class SOverlay> FindLevelViewportOverlay();
@@ -42,4 +43,7 @@ protected:
 
     UPROPERTY(Transient)
     FBufferPresentingInfastructure BufferPresentingInfrastructure;
+
+    UPROPERTY(Transient)
+    bool bPresenting;
 };

@@ -28,32 +28,9 @@ void FMetaballGeneratorComponentDetailCustomization::CustomizeDetails(IDetailLay
         UMetaballGeneratorComponent* MetaballGenerator = Cast<UMetaballGeneratorComponent>(ObjectsBegingCustomized[0]);
         if (MetaballGenerator)
         {
-            TSharedPtr<IPropertyHandle> RenderTargetSizeProperty = DetailBuilder.GetProperty(TEXT("RenderTargetSize"));
-            if (RenderTargetSizeProperty)
-            {
-                // Set Min/Max
-                RenderTargetSizeProperty->GetProperty()->SetMetaData(FName(TEXT("UIMin")), FString::FromInt(720));
-                RenderTargetSizeProperty->GetProperty()->SetMetaData(FName(TEXT("ClampMin")), FString::FromInt(720));
-                RenderTargetSizeProperty->GetProperty()->SetMetaData(FName(TEXT("UIMax")), FString::FromInt(3840));
-                RenderTargetSizeProperty->GetProperty()->SetMetaData(FName(TEXT("ClampMax")), FString::FromInt(3840));
-
-                // OnPropertyValueChanged is called after UActorComponet::OnRegister(), where the buffer has been initialized.
-                auto OnPropetyValueChanged = [MetaballGenerator]()
-                {
-                    UBufferPresentingEditorSubsystem* EditorSubsystem = GEditor->GetEditorSubsystem<UBufferPresentingEditorSubsystem>();
-                    if (EditorSubsystem)
-                    {
-                        EditorSubsystem->Present(MetaballGenerator->GetBuffer());
-                    }
-                };
-
-                RenderTargetSizeProperty->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda(OnPropetyValueChanged));
-                RenderTargetSizeProperty->SetOnChildPropertyValueChanged(FSimpleDelegate::CreateLambda(OnPropetyValueChanged));
-            }
-
             auto ToRenderMetaballLamda = [MetaballGenerator]()
             {
-                MetaballGenerator->RenderMetbaball();
+                MetaballGenerator->Process();
             };
 
             TSharedPtr<IPropertyHandle> Point0Property = DetailBuilder.GetProperty(TEXT("Point0"));
@@ -101,7 +78,7 @@ void FMetaballGeneratorComponentDetailCustomization::CustomizeDetails(IDetailLay
                 auto OnPropertyValueChanged = [MetaballGenerator, this]()
                 {
                     MetaballGenerator->UpdateColorRampTexture();
-                    MetaballGenerator->RenderMetbaball();
+                    MetaballGenerator->Process();
                 };
 
                 ColorRampProperty->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda(OnPropertyValueChanged));

@@ -2,10 +2,3 @@
 
 #include "BufferPostPass.h"
 
-FBufferPostPass::FBufferPostPass()
-{
-}
-
-FBufferPostPass::~FBufferPostPass()
-{
-}

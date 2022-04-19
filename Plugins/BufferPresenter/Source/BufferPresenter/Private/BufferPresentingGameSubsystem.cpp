@@ -57,6 +57,7 @@ void UBufferPresentingUtility::InitBufferPresentingInfrastructure(UObject* Outer
 void UBufferPresentingGameSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
     UBufferPresentingUtility::InitBufferPresentingInfrastructure(this, BufferPresentingInfrastructure);
+    bPresenting = false;
 }
 
 void UBufferPresentingGameSubsystem::Deinitialize()
@@ -79,6 +80,8 @@ void UBufferPresentingGameSubsystem::Present(UTextureRenderTarget2D* Buffer)
             FWorldDelegates::LevelRemovedFromWorld.RemoveAll(this);
             // Widgets added to the viewport are automatically removed if the persistent level is unloaded.
             FWorldDelegates::LevelRemovedFromWorld.AddUObject(this, &UBufferPresentingGameSubsystem::OnLevelRemovedFromWorld);
+
+            bPresenting = true;
         }
     }
 }
@@ -92,10 +95,17 @@ void UBufferPresentingGameSubsystem::Shutdown()
         {
             ViewportClient->RemoveViewportWidgetContent(BufferPresentingInfrastructure.FullscreenWidget.ToSharedRef());
             FWorldDelegates::LevelRemovedFromWorld.RemoveAll(this);
+
+            bPresenting = false;
         }
     }
 
     BufferPresentingInfrastructure.BufferMID->ClearParameterValues();
+}
+
+bool UBufferPresentingGameSubsystem::IsPresenting()
+{
+    return bPresenting;
 }
 
 void UBufferPresentingGameSubsystem::OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld)

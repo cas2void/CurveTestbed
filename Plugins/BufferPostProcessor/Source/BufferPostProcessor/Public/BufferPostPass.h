@@ -4,12 +4,11 @@
 
 #include "CoreMinimal.h"
 
+
 /**
  * 
  */
-class BUFFERPOSTPROCESSOR_API FBufferPostPass
+class BUFFERPOSTPROCESSOR_API IBufferPostPass
 {
 public:
-    FBufferPostPass();
-    ~FBufferPostPass();
 };
