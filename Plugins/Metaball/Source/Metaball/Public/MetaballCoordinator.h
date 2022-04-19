@@ -32,7 +32,7 @@ public:
 public:
     UMetaballGeneratorComponent* GetMetaballGeneratorComponent() { return MetaballGenerator; }
     UBufferPostStackComponent* GetBufferPostStackComponent() { return PostStack; }
-    FIntPoint GetRenderTargetSize() { return RenderTargetSize; }
+    FIntPoint GetRenderTargetSize() const { return RenderTargetSize; }
 
 protected:
     UPROPERTY(VisibleAnywhere)
@@ -45,6 +45,7 @@ protected:
     FIntPoint RenderTargetSize = FIntPoint(1920, 1080);
 
     void OnMetaballGeneratorResize(const FIntPoint& Size);
+    void OnMetaballProcess();
     void OnPostStackResize(const FIntPoint& Size);
 
     //

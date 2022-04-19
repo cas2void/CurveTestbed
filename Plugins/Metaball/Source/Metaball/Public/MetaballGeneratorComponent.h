@@ -71,7 +71,12 @@ protected:
 public:
     void Process();
 
+    DECLARE_MULTICAST_DELEGATE(FProcessDelegate)
+    FProcessDelegate& OnProcess() { return ProcessDelegate; }
+
 protected:
+    FProcessDelegate ProcessDelegate;
+
     UPROPERTY(EditAnywhere)
 	FVector Point0;
 

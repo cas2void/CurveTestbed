@@ -72,6 +72,8 @@ void FMetaballCoordinatorDetailCustomization::CustomizeDetails(IDetailLayoutBuil
                 RenderTargetSizeProperty->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda(OnPropetyValueChanged));
                 RenderTargetSizeProperty->SetOnChildPropertyValueChanged(FSimpleDelegate::CreateLambda(OnPropetyValueChanged));
             }
+
+            CategoryBuilder.AddProperty(RenderTargetSizeProperty);
         }
     }
 }

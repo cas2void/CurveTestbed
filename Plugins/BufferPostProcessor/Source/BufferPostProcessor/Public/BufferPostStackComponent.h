@@ -38,10 +38,10 @@ public:
     FResizeBufferDelegate& OnResize() { return ResizeBufferDelegate; }
 
 protected:
-    UPROPERTY(VisibleAnywhere)
-    UTextureRenderTarget2D* Input;
+    UPROPERTY(VisibleAnywhere, Transient, AdvancedDisplay)
+    TWeakObjectPtr<UTextureRenderTarget2D> Input;
 
-    UPROPERTY(VisibleAnywhere)
+    UPROPERTY(VisibleAnywhere, Transient, AdvancedDisplay)
     UTextureRenderTarget2D* Output;
 
     FResizeBufferDelegate ResizeBufferDelegate;

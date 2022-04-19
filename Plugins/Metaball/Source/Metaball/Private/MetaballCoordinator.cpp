@@ -7,7 +7,6 @@
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 
-#include "BufferPostStackComponent.h"
 #include "BufferPresentingGameSubsystem.h"
 
 // Sets default values
@@ -21,6 +20,8 @@ AMetaballCoordinator::AMetaballCoordinator()
 
 	MetaballGenerator->OnResize().RemoveAll(this);
 	MetaballGenerator->OnResize().AddUObject(this, &AMetaballCoordinator::OnMetaballGeneratorResize);
+	MetaballGenerator->OnProcess().RemoveAll(this);
+	MetaballGenerator->OnProcess().AddUObject(this, &AMetaballCoordinator::OnMetaballProcess);
 
 	PostStack->OnResize().RemoveAll(this);
 	PostStack->OnResize().AddUObject(this, &AMetaballCoordinator::OnPostStackResize);
@@ -50,6 +51,11 @@ void AMetaballCoordinator::Tick(float DeltaTime)
 void AMetaballCoordinator::OnMetaballGeneratorResize(const FIntPoint& Size)
 {
 	PostStack->SetInput(MetaballGenerator->GetBuffer());
+}
+
+void AMetaballCoordinator::OnMetaballProcess()
+{
+	PostStack->Process();
 }
 
 void AMetaballCoordinator::OnPostStackResize(const FIntPoint& Size)

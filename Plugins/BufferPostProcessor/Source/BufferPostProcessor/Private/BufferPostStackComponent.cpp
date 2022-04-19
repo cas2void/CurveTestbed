@@ -35,12 +35,18 @@ void UBufferPostStackComponent::SetInput(UTextureRenderTarget2D* InputRT)
 {
     Input = InputRT;
 
-    if (Input &&
-        (!Output || Output->SizeX != Input->SizeX || Output->SizeY != Input->SizeY))
+    if (InputRT &&
+        (!Output || Output->SizeX != InputRT->SizeX || Output->SizeY != InputRT->SizeY))
     {
-        Output = UKismetRenderingLibrary::CreateRenderTarget2D(this, Input->SizeX, Input->SizeY, RTF_RGBA16f, FLinearColor::White);
+        Output = UKismetRenderingLibrary::CreateRenderTarget2D(this, InputRT->SizeX, InputRT->SizeY, RTF_RGBA16f, FLinearColor::White);
 
-        ResizeBufferDelegate.Broadcast(FIntPoint(Input->SizeX, Input->SizeY));
+        // Output could be nullptr, when this function called in Constructor, where current World of `this` is nullptr.
+        if (Output)
+        {
+            // Reprocess as the size of cooking render target has been changed.
+            Process();
+            ResizeBufferDelegate.Broadcast(FIntPoint(InputRT->SizeX, InputRT->SizeY));
+        }
     }
 }
 
@@ -51,5 +57,6 @@ UTextureRenderTarget2D* UBufferPostStackComponent::GetOutput()
 
 void UBufferPostStackComponent::Process()
 {
+    UE_LOG(LogTemp, Warning, TEXT("Post Stack:: Process()"));
 }
 

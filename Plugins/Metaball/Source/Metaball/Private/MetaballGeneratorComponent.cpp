@@ -23,7 +23,6 @@ void UMetaballGeneratorComponent::OnRegister()
     Super::OnRegister();
 
     SetSize(RenderTargetSize);
-    CreateColorRampTexture();
 }
 
 // Called when the game starts
@@ -31,7 +30,6 @@ void UMetaballGeneratorComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    Process();
 }
 
 // Called every frame
@@ -50,7 +48,15 @@ void UMetaballGeneratorComponent::SetSize(const FIntPoint& Size)
         RenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(this, Size.X, Size.Y, RTF_RGBA16f, FLinearColor::Blue);
         RenderTargetSize = Size;
 
-        ResizeBufferDelegate.Broadcast(RenderTargetSize);
+        // RenderTarget could be nullptr, when this function called in Constructor, where current World of `this` is nullptr.
+        if (RenderTarget)
+        {
+            CreateColorRampTexture();
+            // Reprocess as the size of cooking render target has been changed.
+            Process();
+
+            ResizeBufferDelegate.Broadcast(RenderTargetSize);
+        }
     }
 }
 
@@ -82,4 +88,6 @@ void UMetaballGeneratorComponent::Process()
     ShaderParam.ColorRampTexture = ColorRampTexture;
 
     FMetaballGeneratorShader::RenderMetaball(RenderTarget, FIntPoint(RenderTarget->SizeX, RenderTarget->SizeY), ShaderParam);
+
+    ProcessDelegate.Broadcast();
 }
