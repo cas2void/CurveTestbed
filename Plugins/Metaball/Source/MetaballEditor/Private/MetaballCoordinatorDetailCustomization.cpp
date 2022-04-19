@@ -85,7 +85,6 @@ FReply FMetaballCoordinatorDetailCustomization::OnMetaballPresent()
         AMetaballCoordinator* MetaballCoordinator = Cast<AMetaballCoordinator>(ObjectsBeingCustomized[0].Get());
         if (MetaballCoordinator)
         {
-            //MetaballCoordinator->GetMetaballGeneratorComponent()->RenderMetbaball();
             UBufferPresentingEditorSubsystem* BufferPresentingSubsystem = GEditor->GetEditorSubsystem<UBufferPresentingEditorSubsystem>();
             if (BufferPresentingSubsystem)
             {

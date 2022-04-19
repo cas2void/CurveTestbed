@@ -7,7 +7,6 @@
 #include "Engine/Texture2DDynamic.h"
 
 #include "MetaballGeneratorShader.h"
-#include "BufferPresentingGameSubsystem.h"
 
 // Sets default values for this component's properties
 UMetaballGeneratorComponent::UMetaballGeneratorComponent()

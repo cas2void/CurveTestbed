@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class BufferPostProcessor : ModuleRules
+public class BufferPostProcessorShader : ModuleRules
 {
-    public BufferPostProcessor(ReadOnlyTargetRules Target) : base(Target)
+    public BufferPostProcessorShader(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
         
@@ -37,7 +37,8 @@ public class BufferPostProcessor : ModuleRules
                 "CoreUObject",
                 "Engine",
                 // ... add private dependencies that you statically link with here ...    
-                "BufferPostProcessorShader",
+                "RenderCore",
+                "RHI",
             }
             );
         

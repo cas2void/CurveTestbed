@@ -19,6 +19,11 @@
             "Name": "BufferPostProcessor",
             "Type": "Runtime",
             "LoadingPhase": "Default"
+        },
+        {
+            "Name": "BufferPostProcessorShader",
+            "Type": "Runtime",
+            "LoadingPhase": "PostConfigInit"
         }
     ]
 }

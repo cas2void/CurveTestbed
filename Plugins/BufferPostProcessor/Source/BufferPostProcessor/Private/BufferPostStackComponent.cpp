@@ -4,6 +4,8 @@
 
 #include "Kismet/KismetRenderingLibrary.h"
 
+#include "BufferPostProcessorShaderUtility.h"
+
 // Sets default values for this component's properties
 UBufferPostStackComponent::UBufferPostStackComponent()
 {
@@ -57,6 +59,9 @@ UTextureRenderTarget2D* UBufferPostStackComponent::GetOutput()
 
 void UBufferPostStackComponent::Process()
 {
-    UE_LOG(LogTemp, Warning, TEXT("Post Stack:: Process()"));
+    if (Input.IsValid() && Output)
+    {
+        FBufferPostProcessorShaderUtility::CopyRenderTarget(Input.Get(), Output);
+    }
 }
 
