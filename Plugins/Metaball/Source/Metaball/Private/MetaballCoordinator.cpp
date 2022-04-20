@@ -16,15 +16,11 @@ AMetaballCoordinator::AMetaballCoordinator()
 	PrimaryActorTick.bCanEverTick = true;
 
 	MetaballGenerator = CreateDefaultSubobject<UMetaballGeneratorComponent>(FName("MetaballGenerator"));
-	PostStack = CreateDefaultSubobject<UBufferPostStackComponent>(FName("PostStack"));
 
 	MetaballGenerator->OnResize().RemoveAll(this);
 	MetaballGenerator->OnResize().AddUObject(this, &AMetaballCoordinator::OnMetaballGeneratorResize);
 	MetaballGenerator->OnProcess().RemoveAll(this);
 	MetaballGenerator->OnProcess().AddUObject(this, &AMetaballCoordinator::OnMetaballProcess);
-
-	PostStack->OnResize().RemoveAll(this);
-	PostStack->OnResize().AddUObject(this, &AMetaballCoordinator::OnPostStackResize);
 
 	MetaballGenerator->SetSize(RenderTargetSize);
 }
@@ -37,7 +33,7 @@ void AMetaballCoordinator::BeginPlay()
 	UBufferPresentingGameSubsystem* PresentingSubsystem = GetBufferPresentingSubsystem();
 	if (PresentingSubsystem)
 	{
-		PresentingSubsystem->Present(PostStack->GetOutput());
+		PresentingSubsystem->Present(MetaballGenerator->GetOutput());
 	}
 }
 
@@ -50,22 +46,16 @@ void AMetaballCoordinator::Tick(float DeltaTime)
 
 void AMetaballCoordinator::OnMetaballGeneratorResize(const FIntPoint& Size)
 {
-	PostStack->SetInput(MetaballGenerator->GetBuffer());
-}
-
-void AMetaballCoordinator::OnMetaballProcess()
-{
-	PostStack->Process();
-}
-
-void AMetaballCoordinator::OnPostStackResize(const FIntPoint& Size)
-{
 	// Present
 	UBufferPresentingGameSubsystem* PresentingSubsystem = GetBufferPresentingSubsystem();
 	if (PresentingSubsystem && PresentingSubsystem->IsPresenting())
 	{
-		PresentingSubsystem->Present(PostStack->GetOutput());
+		PresentingSubsystem->Present(MetaballGenerator->GetOutput());
 	}
+}
+
+void AMetaballCoordinator::OnMetaballProcess()
+{
 }
 
 UBufferPresentingGameSubsystem* AMetaballCoordinator::GetBufferPresentingSubsystem()

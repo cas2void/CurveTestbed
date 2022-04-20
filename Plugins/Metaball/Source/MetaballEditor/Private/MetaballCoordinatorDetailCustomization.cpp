@@ -65,7 +65,7 @@ void FMetaballCoordinatorDetailCustomization::CustomizeDetails(IDetailLayoutBuil
                     UBufferPresentingEditorSubsystem* BufferPresentingSubsystem = GEditor->GetEditorSubsystem<UBufferPresentingEditorSubsystem>();
                     if (BufferPresentingSubsystem && BufferPresentingSubsystem->IsPresenting())
                     {
-                        BufferPresentingSubsystem->Present(MetaballCoordinator->GetBufferPostStackComponent()->GetOutput());
+                        BufferPresentingSubsystem->Present(MetaballCoordinator->GetMetaballGeneratorComponent()->GetOutput());
                     }
                 };
 
@@ -88,7 +88,7 @@ FReply FMetaballCoordinatorDetailCustomization::OnMetaballPresent()
             UBufferPresentingEditorSubsystem* BufferPresentingSubsystem = GEditor->GetEditorSubsystem<UBufferPresentingEditorSubsystem>();
             if (BufferPresentingSubsystem)
             {
-                BufferPresentingSubsystem->Present(MetaballCoordinator->GetBufferPostStackComponent()->GetOutput());
+                BufferPresentingSubsystem->Present(MetaballCoordinator->GetMetaballGeneratorComponent()->GetOutput());
             }
         }
     }

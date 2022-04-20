@@ -32,14 +32,12 @@ public:
 public:
     void SetSize(const FIntPoint& Size);
 
-    DECLARE_MULTICAST_DELEGATE_OneParam(FResizeBufferDelegate, const FIntPoint&)
-    FResizeBufferDelegate& OnResize() { return ResizeBufferDelegate; }
+    DECLARE_MULTICAST_DELEGATE_OneParam(FResizeDelegate, const FIntPoint&)
+    FResizeDelegate& OnResize() { return ResizeDelegate; }
 
-    UTextureRenderTarget2D* GetBuffer() { return RenderTarget; }
+    UTextureRenderTarget2D* GetOutput();
 
 protected:
-    UPROPERTY(VisibleInstanceOnly, Transient, AdvancedDisplay)
-    UTextureRenderTarget2D* RenderTarget;
 
     // Desired render target size, value set by SetSize() from caller.
     // As member `RenderTarget` is Transient, it has to be checked and created in OnRegister(), 
@@ -47,7 +45,16 @@ protected:
     UPROPERTY()
     FIntPoint RenderTargetSize = FIntPoint(-1, -1);
 
-    FResizeBufferDelegate ResizeBufferDelegate;
+    FResizeDelegate ResizeDelegate;
+
+    UPROPERTY(VisibleInstanceOnly, Transient, AdvancedDisplay)
+    UTextureRenderTarget2D* DryRT;
+
+    UPROPERTY(VisibleInstanceOnly, Transient, AdvancedDisplay)
+    UTextureRenderTarget2D* WetRT;
+
+    UPROPERTY(VisibleAnywhere)
+    class UBufferPostStack* PostStack;
 
     //
     // Ramp

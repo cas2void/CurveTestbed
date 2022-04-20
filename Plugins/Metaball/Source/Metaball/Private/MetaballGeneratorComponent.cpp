@@ -7,6 +7,7 @@
 #include "Engine/Texture2DDynamic.h"
 
 #include "MetaballGeneratorShader.h"
+#include "BufferPostStack.h"
 
 // Sets default values for this component's properties
 UMetaballGeneratorComponent::UMetaballGeneratorComponent()
@@ -15,6 +16,8 @@ UMetaballGeneratorComponent::UMetaballGeneratorComponent()
     // off to improve performance if you don't need them.
     PrimaryComponentTick.bCanEverTick = true;
     // ...
+
+    PostStack = CreateDefaultSubobject<UBufferPostStack>(FName("PostStack"));
 }
 
 void UMetaballGeneratorComponent::OnRegister()
@@ -42,20 +45,33 @@ void UMetaballGeneratorComponent::TickComponent(float DeltaTime, ELevelTick Tick
 void UMetaballGeneratorComponent::SetSize(const FIntPoint& Size)
 {
     if (Size.X > 0 && Size.Y > 0 &&
-        (!RenderTarget || RenderTarget->SizeX != Size.X || RenderTarget->SizeY != Size.Y))
+        (!DryRT || DryRT->SizeX != Size.X || DryRT->SizeY != Size.Y || !WetRT || WetRT->SizeX != Size.X || WetRT->SizeY != Size.Y))
     {
-        RenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(this, Size.X, Size.Y, RTF_RGBA16f, FLinearColor::Blue);
+        DryRT = UKismetRenderingLibrary::CreateRenderTarget2D(this, Size.X, Size.Y, RTF_RGBA16f, FLinearColor::Yellow);
+        WetRT = UKismetRenderingLibrary::CreateRenderTarget2D(this, Size.X, Size.Y, RTF_RGBA16f, FLinearColor::Blue);
         RenderTargetSize = Size;
 
-        // RenderTarget could be nullptr, when this function called in Constructor, where current World of `this` is nullptr.
-        if (RenderTarget)
+        // RenderTarget could be nullptr, when this function gets called in Constructor, where current World of `this` is nullptr.
+        if (DryRT && WetRT)
         {
             CreateColorRampTexture();
             // Reprocess as the size of cooking render target has been changed.
             Process();
 
-            ResizeBufferDelegate.Broadcast(RenderTargetSize);
+            ResizeDelegate.Broadcast(Size);
         }
+    }
+}
+
+UTextureRenderTarget2D* UMetaballGeneratorComponent::GetOutput()
+{
+    if (PostStack->HasEffect())
+    {
+        return WetRT;
+    }
+    else
+    {
+        return DryRT;
     }
 }
 
@@ -83,10 +99,12 @@ void UMetaballGeneratorComponent::Process()
     ShaderParam.Point0 = Point0;
     ShaderParam.Point1 = Point1;
     ShaderParam.Point2 = Point2;
-    ShaderParam.AspectRatio = static_cast<float>(RenderTarget->SizeX) / static_cast<float>(RenderTarget->SizeY);
+    ShaderParam.AspectRatio = static_cast<float>(DryRT->SizeX) / static_cast<float>(DryRT->SizeY);
     ShaderParam.ColorRampTexture = ColorRampTexture;
 
-    FMetaballGeneratorShader::RenderMetaball(RenderTarget, FIntPoint(RenderTarget->SizeX, RenderTarget->SizeY), ShaderParam);
+    FMetaballGeneratorShader::RenderMetaball(DryRT, FIntPoint(DryRT->SizeX, DryRT->SizeY), ShaderParam);
+
+    PostStack->Process(DryRT, WetRT);
 
     ProcessDelegate.Broadcast();
 }
