@@ -25,6 +25,7 @@ void UMetaballGeneratorComponent::OnRegister()
     Super::OnRegister();
 
     SetSize(RenderTargetSize);
+    PostStack->SetSize(RenderTargetSize, RTF_RGBA16f);
 }
 
 // Called when the game starts
@@ -45,14 +46,13 @@ void UMetaballGeneratorComponent::TickComponent(float DeltaTime, ELevelTick Tick
 void UMetaballGeneratorComponent::SetSize(const FIntPoint& Size)
 {
     if (Size.X > 0 && Size.Y > 0 &&
-        (!DryRT || DryRT->SizeX != Size.X || DryRT->SizeY != Size.Y || !WetRT || WetRT->SizeX != Size.X || WetRT->SizeY != Size.Y))
+        (!OutputRT || OutputRT->SizeX != Size.X || OutputRT->SizeY != Size.Y))
     {
-        DryRT = UKismetRenderingLibrary::CreateRenderTarget2D(this, Size.X, Size.Y, RTF_RGBA16f, FLinearColor::Yellow);
-        WetRT = UKismetRenderingLibrary::CreateRenderTarget2D(this, Size.X, Size.Y, RTF_RGBA16f, FLinearColor::Blue);
+        OutputRT = UKismetRenderingLibrary::CreateRenderTarget2D(this, Size.X, Size.Y, RTF_RGBA16f, FLinearColor::Yellow);
         RenderTargetSize = Size;
 
         // RenderTarget could be nullptr, when this function gets called in Constructor, where current World of `this` is nullptr.
-        if (DryRT && WetRT)
+        if (OutputRT)
         {
             CreateColorRampTexture();
             // Reprocess as the size of cooking render target has been changed.
@@ -67,11 +67,11 @@ UTextureRenderTarget2D* UMetaballGeneratorComponent::GetOutput()
 {
     if (PostStack->HasEffect())
     {
-        return WetRT;
+        return PostStack->GetOutput();
     }
     else
     {
-        return DryRT;
+        return OutputRT;
     }
 }
 
@@ -99,12 +99,15 @@ void UMetaballGeneratorComponent::Process()
     ShaderParam.Point0 = Point0;
     ShaderParam.Point1 = Point1;
     ShaderParam.Point2 = Point2;
-    ShaderParam.AspectRatio = static_cast<float>(DryRT->SizeX) / static_cast<float>(DryRT->SizeY);
+    ShaderParam.AspectRatio = static_cast<float>(OutputRT->SizeX) / static_cast<float>(OutputRT->SizeY);
     ShaderParam.ColorRampTexture = ColorRampTexture;
 
-    FMetaballGeneratorShader::RenderMetaball(DryRT, FIntPoint(DryRT->SizeX, DryRT->SizeY), ShaderParam);
+    FMetaballGeneratorShader::RenderMetaball(OutputRT, FIntPoint(OutputRT->SizeX, OutputRT->SizeY), ShaderParam);
 
-    PostStack->Process(DryRT, WetRT);
-
+    if (PostStack->HasEffect())
+    {
+        PostStack->Process(OutputRT);
+    }
+    
     ProcessDelegate.Broadcast();
 }

@@ -48,10 +48,7 @@ protected:
     FResizeDelegate ResizeDelegate;
 
     UPROPERTY(VisibleInstanceOnly, Transient, AdvancedDisplay)
-    UTextureRenderTarget2D* DryRT;
-
-    UPROPERTY(VisibleInstanceOnly, Transient, AdvancedDisplay)
-    UTextureRenderTarget2D* WetRT;
+    UTextureRenderTarget2D* OutputRT;
 
     UPROPERTY(VisibleAnywhere)
     class UBufferPostStack* PostStack;
