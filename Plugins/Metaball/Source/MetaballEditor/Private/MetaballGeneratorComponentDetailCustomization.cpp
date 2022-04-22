@@ -83,6 +83,13 @@ void FMetaballGeneratorComponentDetailCustomization::CustomizeDetails(IDetailLay
 
                 ColorRampProperty->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda(OnPropertyValueChanged));
             }
+
+            TSharedPtr<IPropertyHandle> PostStackSettingsProperty = DetailBuilder.GetProperty(TEXT("PostStackSettings"));
+            if (PostStackSettingsProperty)
+            {
+                PostStackSettingsProperty->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda(ToRenderMetaballLamda));
+                PostStackSettingsProperty->SetOnChildPropertyValueChanged(FSimpleDelegate::CreateLambda(ToRenderMetaballLamda));
+            }
         }
     }
 }

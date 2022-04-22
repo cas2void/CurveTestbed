@@ -8,54 +8,48 @@
 #include "BufferPostPass.h"
 #include "BufferPostStack.generated.h"
 
-USTRUCT()
-struct BUFFERPOSTPROCESSOR_API FBufferPostStackPass
-{
-    GENERATED_BODY()
-
-public:
-    UPROPERTY(EditAnywhere)
-    bool bEnabled;
-
-    UPROPERTY(EditAnywhere)
-    EBufferPostPassType Type;
-
-    UPROPERTY(VisibleAnywhere)
-    UBufferPostPass* Pass;
-};
-
 /**
- * 
+ *
  */
-UCLASS()
-class BUFFERPOSTPROCESSOR_API UBufferPostStack : public UObject
+USTRUCT()
+struct BUFFERPOSTPROCESSOR_API FBufferPostStackLayer
 {
     GENERATED_BODY()
 
 public:
-    void Process(UTextureRenderTarget2D* InputRT);
-
-    bool HasEffect();
-
-protected:
     UPROPERTY(EditAnywhere)
     bool bEnabled = true;
 
     UPROPERTY(EditAnywhere)
-    TArray<FBufferPostStackPass> Passes;
+    EBufferPostPassType Type;
 
-    //
-    // Buffers
-    //
+    UPROPERTY(EditAnywhere, Instanced)
+    UBufferPostPass* Pass;
+};
+
+/**
+ *
+ */
+USTRUCT()
+struct BUFFERPOSTPROCESSOR_API FBufferPostStackSettings
+{
+    GENERATED_BODY()
+
 public:
-    void SetSize(const FIntPoint& Size, ETextureRenderTargetFormat Format = RTF_RGBA16f);
+    UPROPERTY(EditAnywhere)
+    bool bEnabled = true;
 
-    UTextureRenderTarget2D* GetOutput() { return OutputRT; }
+    UPROPERTY(EditAnywhere)
+    TArray<FBufferPostStackLayer> Layers;
 
-protected:
-    UPROPERTY(VisibleInstanceOnly, Transient, AdvancedDisplay)
-    UTextureRenderTarget2D* IntermediateRT;
+    bool HasEffect() const;
+};
 
-    UPROPERTY(VisibleInstanceOnly, Transient, AdvancedDisplay)
-    UTextureRenderTarget2D* OutputRT;
+/**
+ *
+ */
+class BUFFERPOSTPROCESSOR_API FBufferPostStack
+{
+public:
+    static void Process(UTextureRenderTarget2D* InputRT, UTextureRenderTarget2D* OutputRT, const FBufferPostStackSettings& Settings);
 };

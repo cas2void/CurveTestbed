@@ -2,3 +2,17 @@
 
 #include "BufferPostPass.h"
 
+TMap<EBufferPostPassType, UClass*> UBufferPostPass::TypeClassMap = { {EBufferPostPassType::Ramp, UBufferRampPass::StaticClass()} };
+
+UClass* UBufferPostPass::GetClassFromType(EBufferPostPassType Type)
+{
+    UClass** Result = TypeClassMap.Find(Type);
+    if (Result)
+    {
+        return *Result;
+    }
+    else
+    {
+        return nullptr;
+    }
+}

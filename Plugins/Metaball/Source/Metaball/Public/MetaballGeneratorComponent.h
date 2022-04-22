@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Engine/TextureRenderTarget2D.h"
 #include "Curves/CurveLinearColor.h"
+#include "BufferPostStack.h"
 #include "MetaballGeneratorComponent.generated.h"
 
 
@@ -38,7 +39,6 @@ public:
     UTextureRenderTarget2D* GetOutput();
 
 protected:
-
     // Desired render target size, value set by SetSize() from caller.
     // As member `RenderTarget` is Transient, it has to be checked and created in OnRegister(), 
     // this Value need to be serialized for later use in render target creation.
@@ -48,10 +48,13 @@ protected:
     FResizeDelegate ResizeDelegate;
 
     UPROPERTY(VisibleInstanceOnly, Transient, AdvancedDisplay)
-    UTextureRenderTarget2D* OutputRT;
+    UTextureRenderTarget2D* DryRT;
 
-    UPROPERTY(VisibleAnywhere)
-    class UBufferPostStack* PostStack;
+    UPROPERTY(VisibleInstanceOnly, Transient, AdvancedDisplay)
+    UTextureRenderTarget2D* WetRT;
+
+    UPROPERTY(EditAnywhere)
+    FBufferPostStackSettings PostStackSettings;
 
     //
     // Ramp
