@@ -16,3 +16,8 @@ UClass* UBufferPostPass::GetClassFromType(EBufferPostPassType Type)
         return nullptr;
     }
 }
+
+void UBufferRampPass::Process(UTextureRenderTarget2D* InputRT, UTextureRenderTarget2D* OutputRT)
+{
+    FBufferRampPass::Process(InputRT, OutputRT, PassSettings);
+}

@@ -4,19 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "Curves/CurveLinearColor.h"
+#include "Engine/TextureRenderTarget2D.h"
+
+#include "BufferRampPass.h"
+
 #include "BufferPostPass.generated.h"
 
-USTRUCT()
-struct BUFFERPOSTPROCESSOR_API FBufferRampPassSettings
-{
-    GENERATED_BODY()
-
-public:
-    UPROPERTY(EditAnywhere)
-    FRuntimeCurveLinearColor RampCurve;
-};
-
+/**
+ *
+ */
 UENUM()
 enum class EBufferPostPassType : uint8
 {
@@ -31,7 +27,13 @@ UCLASS()
 class BUFFERPOSTPROCESSOR_API UBufferPostPass : public UObject
 {
     GENERATED_BODY()
+
+public:
+    virtual void Process(UTextureRenderTarget2D* InputRT, UTextureRenderTarget2D* OutputRT) {};
     
+    //
+    // Class < > Type Conversion
+    //
 public:
     static UClass* GetClassFromType(EBufferPostPassType Type);
 
@@ -39,6 +41,9 @@ protected:
     static TMap<EBufferPostPassType, UClass*> TypeClassMap;
 };
 
+/**
+ *
+ */
 UCLASS()
 class BUFFERPOSTPROCESSOR_API UBufferRampPass : public UBufferPostPass
 {
@@ -47,4 +52,6 @@ class BUFFERPOSTPROCESSOR_API UBufferRampPass : public UBufferPostPass
 public:
     UPROPERTY(EditAnywhere)
     FBufferRampPassSettings PassSettings;
+
+    virtual void Process(UTextureRenderTarget2D* InputRT, UTextureRenderTarget2D* OutputRT) override;
 };

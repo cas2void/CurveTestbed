@@ -87,11 +87,18 @@ void FMetaballGeneratorComponentDetailCustomization::CustomizeDetails(IDetailLay
             TSharedPtr<IPropertyHandle> PostStackSettingsProperty = DetailBuilder.GetProperty(TEXT("PostStackSettings"));
             if (PostStackSettingsProperty)
             {
-                PostStackSettingsProperty->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda(ToRenderMetaballLamda));
-                PostStackSettingsProperty->SetOnChildPropertyValueChanged(FSimpleDelegate::CreateLambda(ToRenderMetaballLamda));
+                //PostStackSettingsProperty->SetOnPropertyValueChanged(FSimpleDelegate::CreateSP(this, &FMetaballGeneratorComponentDetailCustomization::OnPostStackSettingsChanged, MetaballGenerator));
+                //PostStackSettingsProperty->SetOnChildPropertyValueChanged(FSimpleDelegate::CreateSP(this, &FMetaballGeneratorComponentDetailCustomization::OnPostStackSettingsChanged, MetaballGenerator));
             }
         }
     }
 }
+
+void FMetaballGeneratorComponentDetailCustomization::OnPostStackSettingsChanged(UMetaballGeneratorComponent* MetaballGenerator)
+{
+    MetaballGenerator->Process();
+}
+
+
 
 #undef LOCTEXT_NAMESPACE

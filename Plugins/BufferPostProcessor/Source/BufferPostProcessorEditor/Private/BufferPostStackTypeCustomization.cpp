@@ -83,6 +83,12 @@ void FBufferPostStackLayerTypeCustomization::CustomizeChildren(TSharedRef<IPrope
     {
         TSharedRef<IPropertyHandle> TypeProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostStackLayer, Type)).ToSharedRef();
         TSharedRef<IPropertyHandle> PassProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostStackLayer, Pass)).ToSharedRef();
+        PassProperty->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda(
+            []()
+            {
+                UE_LOG(LogTemp, Warning, TEXT("PassProperty->SetOnPropertyValueChanged"));
+            }
+        ));
         
         TypeProperty->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda(
             [Outer, TypeProperty, PassProperty]()
@@ -108,6 +114,12 @@ void FBufferPostStackLayerTypeCustomization::CustomizeChildren(TSharedRef<IPrope
         TSharedPtr<IPropertyHandle> PassSettingsProperty = PassProperty->GetChildHandle(FName(TEXT("PassSettings")));
         if (PassSettingsProperty)
         {
+            PassSettingsProperty->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda(
+                []()
+                {
+                    UE_LOG(LogTemp, Warning, TEXT("PassSettingsProperty->SetOnPropertyValueChanged"));
+                }
+            ));
             uint32 NumChildren;
             PassSettingsProperty->GetNumChildren(NumChildren);
             for (uint32 Index = 0; Index < NumChildren; Index++)

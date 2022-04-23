@@ -25,6 +25,8 @@ public:
 
     UPROPERTY(EditAnywhere, Instanced)
     UBufferPostPass* Pass;
+
+    bool IsValid() const;
 };
 
 /**
@@ -43,6 +45,8 @@ public:
     TArray<FBufferPostStackLayer> Layers;
 
     bool HasEffect() const;
+
+    int32 GetNumValidLayers() const;
 };
 
 /**
@@ -51,5 +55,5 @@ public:
 class BUFFERPOSTPROCESSOR_API FBufferPostStack
 {
 public:
-    static void Process(UTextureRenderTarget2D* InputRT, UTextureRenderTarget2D* OutputRT, const FBufferPostStackSettings& Settings);
+    static void Process(UTextureRenderTarget2D* InOutRT, UTextureRenderTarget2D* IntermediateRT, const FBufferPostStackSettings& Settings);
 };

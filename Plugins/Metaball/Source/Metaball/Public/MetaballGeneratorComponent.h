@@ -40,18 +40,18 @@ public:
 
 protected:
     // Desired render target size, value set by SetSize() from caller.
-    // As member `RenderTarget` is Transient, it has to be checked and created in OnRegister(), 
-    // this Value need to be serialized for later use in render target creation.
+    // As member `OutputRT` is `Transient`, it has to be checked and created in OnRegister(), 
+    // so this Value need to be serialized for later use in render target creation.
     UPROPERTY()
     FIntPoint RenderTargetSize = FIntPoint(-1, -1);
 
     FResizeDelegate ResizeDelegate;
 
     UPROPERTY(VisibleInstanceOnly, Transient, AdvancedDisplay)
-    UTextureRenderTarget2D* DryRT;
+    UTextureRenderTarget2D* OutputRT;
 
     UPROPERTY(VisibleInstanceOnly, Transient, AdvancedDisplay)
-    UTextureRenderTarget2D* WetRT;
+    UTextureRenderTarget2D* IntermediateRT;
 
     UPROPERTY(EditAnywhere)
     FBufferPostStackSettings PostStackSettings;
