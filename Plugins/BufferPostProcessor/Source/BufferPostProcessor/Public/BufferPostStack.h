@@ -4,9 +4,24 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "UObject/Interface.h"
 #include "Engine/TextureRenderTarget2D.h"
-#include "BufferPostPass.h"
 #include "BufferPostStack.generated.h"
+
+/**
+ *
+ */
+UCLASS(Abstract)
+class BUFFERPOSTPROCESSOR_API UBufferPostPass : public UObject
+{
+    GENERATED_BODY()
+
+public:
+    virtual void Process(UTextureRenderTarget2D* InputRT, UTextureRenderTarget2D* OutputRT) {};
+
+    static TArray<UClass*> GetAllPassClasses();
+    static FText GetDisplayName(UClass* Class);
+};
 
 /**
  *
@@ -19,9 +34,6 @@ struct BUFFERPOSTPROCESSOR_API FBufferPostStackLayer
 public:
     UPROPERTY(EditAnywhere)
     bool bEnabled = true;
-
-    UPROPERTY(EditAnywhere)
-    EBufferPostPassType Type;
 
     UPROPERTY(EditAnywhere, Instanced)
     UBufferPostPass* Pass;

@@ -6,7 +6,7 @@
 
 bool FBufferPostStackLayer::IsValid() const
 {
-    return bEnabled && Type != EBufferPostPassType::None;
+    return bEnabled;
 }
 
 bool FBufferPostStackSettings::HasEffect() const
@@ -79,3 +79,39 @@ void FBufferPostStack::Process(UTextureRenderTarget2D* InOutRT, UTextureRenderTa
         }
     }
 }
+
+TArray<UClass*> UBufferPostPass::GetAllPassClasses()
+{
+    TArray<UClass*> Result;
+
+    for (TObjectIterator<UClass> It; It; ++It)
+    {
+        UClass* CurrentClass = *It;
+        if (!CurrentClass->HasAnyClassFlags(CLASS_Abstract) && CurrentClass->IsChildOf(UBufferPostPass::StaticClass()))
+        {
+            Result.Add(CurrentClass);
+        }
+    }
+
+    return Result;
+}
+
+#define LOCTEXT_NAMESPACE "BufferPostPass"
+
+FText UBufferPostPass::GetDisplayName(UClass* Class)
+{
+    FText Result = LOCTEXT("EmptyPass", "(Empty)");
+
+    if (Class)
+    {
+        FName MetaKey(TEXT("DisplayName"));
+        if (Class->HasMetaData(MetaKey))
+        {
+            Result = FText::FromString(Class->GetMetaData(MetaKey));
+        }
+    }
+
+    return Result;
+}
+
+#undef LOCTEXT_NAMESPACE

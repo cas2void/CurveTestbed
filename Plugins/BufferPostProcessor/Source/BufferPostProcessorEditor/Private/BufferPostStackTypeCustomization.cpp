@@ -6,6 +6,11 @@
 #include "PropertyHandle.h"
 #include "DetailWidgetRow.h"
 #include "IDetailChildrenBuilder.h"
+#include "Widgets/SBoxPanel.h"
+#include "Framework/MultiBox/MultiBoxBuilder.h"
+#include "Framework/Commands/UIAction.h"
+#include "Widgets/Input/SComboButton.h"
+#include "Widgets/Text/STextBlock.h"
 
 #include "BufferPostStack.h"
 
@@ -18,6 +23,49 @@ TSharedRef<IPropertyTypeCustomization> FBufferPostStackSettingsTypeCustomization
 
 void FBufferPostStackSettingsTypeCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> PropertyHandle, FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& CustomizationUtils)
 {
+    FMenuBuilder MenuBuilder(true, nullptr);
+    {
+        UObject* Outer = nullptr;
+        TArray<UObject*> OuterObjects;
+        PropertyHandle->GetOuterObjects(OuterObjects);
+        if (OuterObjects.Num() > 0)
+        {
+            Outer = OuterObjects[0];
+        }
+
+        if (Outer)
+        {
+            TArray<UClass*> AllPassClasses = UBufferPostPass::GetAllPassClasses();
+            for (auto& PassClass : AllPassClasses)
+            {
+                FText MenuText = UBufferPostPass::GetDisplayName(PassClass);
+                FUIAction Action(FExecuteAction::CreateLambda(
+                    [MenuText, PassClass, Outer, PropertyHandle]()
+                    {
+                        UE_LOG(LogTemp, Warning, TEXT("Selected: %s"), *MenuText.ToString());
+
+                        TSharedRef<IPropertyHandle> LayersProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostStackSettings, Layers)).ToSharedRef();
+                        TSharedPtr<IPropertyHandleArray> LayersArray = LayersProperty->AsArray();
+                        LayersArray->AddItem();
+                        uint32 NumElements = INDEX_NONE;
+                        LayersArray->GetNumElements(NumElements);
+                        if (NumElements > 0)
+                        {
+                            TSharedPtr<IPropertyHandle> PassProperty = LayersArray->GetElement(NumElements - 1)->GetChildHandle(FName(TEXT("Pass")));
+                            if (PassProperty)
+                            {
+                                UBufferPostPass* NewPass = NewObject<UBufferPostPass>(Outer, PassClass);
+                                FString PassPath = NewPass->GetPathName();
+                                PassProperty->SetValueFromFormattedString(PassPath);
+                            }
+                        }
+                    }
+                ));
+                MenuBuilder.AddMenuEntry(MenuText, FText(), FSlateIcon(), Action);
+            }
+        }
+    }
+
     TSharedRef<IPropertyHandle> EnabledProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostStackSettings, bEnabled)).ToSharedRef();
     HeaderRow
         .NameContent()
@@ -26,7 +74,35 @@ void FBufferPostStackSettingsTypeCustomization::CustomizeHeader(TSharedRef<IProp
         ]
         .ValueContent()
         [
-            EnabledProperty->CreatePropertyValueWidget()
+            SNew(SHorizontalBox)
+            + SHorizontalBox::Slot()
+            .AutoWidth()
+            [
+                EnabledProperty->CreatePropertyValueWidget()
+            ]
+            + SHorizontalBox::Slot()
+            .AutoWidth()
+            .Padding(FMargin(10, 0))
+            [
+                SNew(SComboButton)
+                .IsEnabled(TAttribute<bool>::Create(TAttribute<bool>::FGetter::CreateLambda(
+                    [EnabledProperty]()
+                    {
+                        bool EnabledValue;
+                        EnabledProperty->GetValue(EnabledValue);
+                        return EnabledValue;
+                    }
+                )))
+                .ButtonContent()
+                [
+                    SNew(STextBlock)
+                    .Text(LOCTEXT("PostStackAddLayerButton", "Add Layer..."))
+                ]
+                .MenuContent()
+                [
+                    MenuBuilder.MakeWidget()
+                ]
+            ]
         ];
 }
 
@@ -54,50 +130,24 @@ TSharedRef<IPropertyTypeCustomization> FBufferPostStackLayerTypeCustomization::M
 void FBufferPostStackLayerTypeCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> PropertyHandle, FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& CustomizationUtils)
 {
     TSharedRef<IPropertyHandle> EnabledProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostStackLayer, bEnabled)).ToSharedRef();
-    TSharedRef<IPropertyHandle> TypeProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostStackLayer, Type)).ToSharedRef();
-
-    HeaderRow
-        .NameContent()
-        [
-            EnabledProperty->CreatePropertyValueWidget()
-        ]
-        .ValueContent()
-        [
-            TypeProperty->CreatePropertyValueWidget()
-        ];
-
-
-    UObject* Outer = nullptr;
-    TArray<UObject*> OuterObjects;
-    PropertyHandle->GetOuterObjects(OuterObjects);
-    if (OuterObjects.Num() > 0)
+    TSharedRef<IPropertyHandle> PassProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostStackLayer, Pass)).ToSharedRef();
+    UObject* PassObject = nullptr;
+    PassProperty->GetValue(PassObject);
+    if (PassObject)
     {
-        Outer = OuterObjects[0];
-    }
+        UClass* PassClass = PassObject->GetClass();
+        FText Name = UBufferPostPass::GetDisplayName(PassClass);
 
-    if (Outer)
-    {
-        TSharedRef<IPropertyHandle> PassProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostStackLayer, Pass)).ToSharedRef();
-        TypeProperty->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda(
-            [Outer, TypeProperty, PassProperty, this]()
-            {
-                uint8 TypeValue;
-                TypeProperty->GetValue(TypeValue);
-                EBufferPostPassType TypeEnum = static_cast<EBufferPostPassType>(TypeValue);
-
-                UClass* PassClass = UBufferPostPass::GetClassFromType(TypeEnum);
-                if (PassClass)
-                {
-                    UBufferPostPass* Pass = NewObject<UBufferPostPass>(Outer, PassClass);
-                    FString PassPathName = Pass->GetPathName();
-                    PassProperty->SetValueFromFormattedString(PassPathName);
-                }
-                else
-                {
-                    PassProperty->SetValueFromFormattedString(FName(NAME_None).ToString());
-                }
-            }
-        ));
+        HeaderRow
+            .NameContent()
+            [
+                SNew(STextBlock)
+                .Text(Name)
+            ]
+            .ValueContent()
+            [
+                EnabledProperty->CreatePropertyValueWidget()
+            ];
     }
 }
 
@@ -107,12 +157,20 @@ void FBufferPostStackLayerTypeCustomization::CustomizeChildren(TSharedRef<IPrope
     TSharedPtr<IPropertyHandle> PassSettingsProperty = PassProperty->GetChildHandle(FName(TEXT("PassSettings")));
     if (PassSettingsProperty)
     {
+        TSharedRef<IPropertyHandle> EnabledProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostStackLayer, bEnabled)).ToSharedRef();
+        auto IsEnabledLamda = [EnabledProperty]()
+        {
+            bool EnabledValue;
+            EnabledProperty->GetValue(EnabledValue);
+            return EnabledValue;
+        };
+
         uint32 NumChildren;
         PassSettingsProperty->GetNumChildren(NumChildren);
         for (uint32 Index = 0; Index < NumChildren; Index++)
         {
             TSharedRef<IPropertyHandle> ChildHandle = PassSettingsProperty->GetChildHandle(Index).ToSharedRef();
-            ChildBuilder.AddProperty(ChildHandle);
+            ChildBuilder.AddProperty(ChildHandle).IsEnabled(TAttribute<bool>::Create(TAttribute<bool>::FGetter::CreateLambda(IsEnabledLamda)));
         }
     }
 }
