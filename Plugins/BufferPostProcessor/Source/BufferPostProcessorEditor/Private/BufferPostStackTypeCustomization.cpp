@@ -43,7 +43,7 @@ void FBufferPostStackSettingsTypeCustomization::CustomizeChildren(TSharedRef<IPr
                 EnabledProperty->GetValue(EnabledValue);
                 return EnabledValue;
             }
-        )));
+    )));
 }
 
 TSharedRef<IPropertyTypeCustomization> FBufferPostStackLayerTypeCustomization::MakeInstance()
@@ -66,11 +66,7 @@ void FBufferPostStackLayerTypeCustomization::CustomizeHeader(TSharedRef<IPropert
             TypeProperty->CreatePropertyValueWidget()
         ];
 
-    
-}
 
-void FBufferPostStackLayerTypeCustomization::CustomizeChildren(TSharedRef<IPropertyHandle> PropertyHandle, IDetailChildrenBuilder& ChildBuilder, IPropertyTypeCustomizationUtils& CustomizationUtils)
-{
     UObject* Outer = nullptr;
     TArray<UObject*> OuterObjects;
     PropertyHandle->GetOuterObjects(OuterObjects);
@@ -81,17 +77,9 @@ void FBufferPostStackLayerTypeCustomization::CustomizeChildren(TSharedRef<IPrope
 
     if (Outer)
     {
-        TSharedRef<IPropertyHandle> TypeProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostStackLayer, Type)).ToSharedRef();
         TSharedRef<IPropertyHandle> PassProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostStackLayer, Pass)).ToSharedRef();
-        PassProperty->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda(
-            []()
-            {
-                UE_LOG(LogTemp, Warning, TEXT("PassProperty->SetOnPropertyValueChanged"));
-            }
-        ));
-        
         TypeProperty->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda(
-            [Outer, TypeProperty, PassProperty]()
+            [Outer, TypeProperty, PassProperty, this]()
             {
                 uint8 TypeValue;
                 TypeProperty->GetValue(TypeValue);
@@ -110,23 +98,21 @@ void FBufferPostStackLayerTypeCustomization::CustomizeChildren(TSharedRef<IPrope
                 }
             }
         ));
+    }
+}
 
-        TSharedPtr<IPropertyHandle> PassSettingsProperty = PassProperty->GetChildHandle(FName(TEXT("PassSettings")));
-        if (PassSettingsProperty)
+void FBufferPostStackLayerTypeCustomization::CustomizeChildren(TSharedRef<IPropertyHandle> PropertyHandle, IDetailChildrenBuilder& ChildBuilder, IPropertyTypeCustomizationUtils& CustomizationUtils)
+{
+    TSharedRef<IPropertyHandle> PassProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostStackLayer, Pass)).ToSharedRef();
+    TSharedPtr<IPropertyHandle> PassSettingsProperty = PassProperty->GetChildHandle(FName(TEXT("PassSettings")));
+    if (PassSettingsProperty)
+    {
+        uint32 NumChildren;
+        PassSettingsProperty->GetNumChildren(NumChildren);
+        for (uint32 Index = 0; Index < NumChildren; Index++)
         {
-            PassSettingsProperty->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda(
-                []()
-                {
-                    UE_LOG(LogTemp, Warning, TEXT("PassSettingsProperty->SetOnPropertyValueChanged"));
-                }
-            ));
-            uint32 NumChildren;
-            PassSettingsProperty->GetNumChildren(NumChildren);
-            for (uint32 Index = 0; Index < NumChildren; Index++)
-            {
-                TSharedRef<IPropertyHandle> ChildHandle = PassSettingsProperty->GetChildHandle(Index).ToSharedRef();
-                ChildBuilder.AddProperty(ChildHandle);
-            }
+            TSharedRef<IPropertyHandle> ChildHandle = PassSettingsProperty->GetChildHandle(Index).ToSharedRef();
+            ChildBuilder.AddProperty(ChildHandle);
         }
     }
 }

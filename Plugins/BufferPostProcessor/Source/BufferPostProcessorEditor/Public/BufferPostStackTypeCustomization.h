@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "IPropertyTypeCustomization.h"
 
+#include "BufferPostPass.h"
+
 /**
  * 
  */
