@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "UObject/Interface.h"
 #include "Engine/TextureRenderTarget2D.h"
 #include "BufferPostStack.generated.h"
 
@@ -20,7 +19,7 @@ public:
     virtual void Process(UTextureRenderTarget2D* InputRT, UTextureRenderTarget2D* OutputRT) {};
 
     static TArray<UClass*> GetAllPassClasses();
-    static FText GetDisplayName(UClass* Class);
+    static FString GetDisplayName(UClass* Class);
 };
 
 /**

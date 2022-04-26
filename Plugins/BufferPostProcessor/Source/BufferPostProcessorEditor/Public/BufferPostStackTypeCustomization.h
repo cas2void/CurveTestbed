@@ -35,4 +35,8 @@ public:
     virtual void CustomizeHeader(TSharedRef<IPropertyHandle> PropertyHandle, FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& CustomizationUtils) override;
 
     virtual void CustomizeChildren(TSharedRef<IPropertyHandle> PropertyHandle, IDetailChildrenBuilder& ChildBuilder, IPropertyTypeCustomizationUtils& CustomizationUtils) override;
+
+protected:
+    TArray<TSharedPtr<FString>> PassTypeOptions;
+    TMap<TSharedPtr<FString>, UClass*> PassTypeClassMap;
 };

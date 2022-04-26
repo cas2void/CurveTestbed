@@ -96,22 +96,18 @@ TArray<UClass*> UBufferPostPass::GetAllPassClasses()
     return Result;
 }
 
-#define LOCTEXT_NAMESPACE "BufferPostPass"
-
-FText UBufferPostPass::GetDisplayName(UClass* Class)
+FString UBufferPostPass::GetDisplayName(UClass* Class)
 {
-    FText Result = LOCTEXT("EmptyPass", "(Empty)");
+    FString Result = FName(NAME_None).ToString();
 
     if (Class)
     {
         FName MetaKey(TEXT("DisplayName"));
         if (Class->HasMetaData(MetaKey))
         {
-            Result = FText::FromString(Class->GetMetaData(MetaKey));
+            Result = Class->GetMetaData(MetaKey);
         }
     }
 
     return Result;
 }
-
-#undef LOCTEXT_NAMESPACE

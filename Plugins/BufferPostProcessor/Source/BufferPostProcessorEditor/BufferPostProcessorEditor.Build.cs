@@ -41,6 +41,7 @@ public class BufferPostProcessorEditor : ModuleRules
 				// ... add private dependencies that you statically link with here ...	
 				"PropertyEditor",
 				"UnrealEd",
+				"InputCore",
 				"BufferPostProcessor",
 			}
 			);
