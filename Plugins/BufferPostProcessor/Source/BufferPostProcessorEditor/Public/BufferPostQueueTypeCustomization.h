@@ -8,7 +8,7 @@
 /**
  * 
  */
-class BUFFERPOSTPROCESSOREDITOR_API FBufferPostStackSettingsTypeCustomization : public IPropertyTypeCustomization
+class BUFFERPOSTPROCESSOREDITOR_API FBufferPostQueueSettingsTypeCustomization : public IPropertyTypeCustomization
 {
 public:
     static TSharedRef<IPropertyTypeCustomization> MakeInstance();
@@ -24,7 +24,7 @@ public:
 /**
  *
  */
-class BUFFERPOSTPROCESSOREDITOR_API FBufferPostStackLayerTypeCustomization : public IPropertyTypeCustomization
+class BUFFERPOSTPROCESSOREDITOR_API FBufferPostQueueLayerTypeCustomization : public IPropertyTypeCustomization
 {
 public:
     static TSharedRef<IPropertyTypeCustomization> MakeInstance();

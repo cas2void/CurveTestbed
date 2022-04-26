@@ -1,15 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "BufferPostStack.h"
+#include "BufferPostQueue.h"
 
 #include "BufferPostProcessorShaderUtility.h"
 
-bool FBufferPostStackLayer::IsValid() const
+bool FBufferPostQueueLayer::IsValid() const
 {
-    return bEnabled;
+    return bEnabled && Pass;
 }
 
-bool FBufferPostStackSettings::HasEffect() const
+bool FBufferPostQueueSettings::HasEffect() const
 {
     bool Result = false;
 
@@ -28,7 +28,7 @@ bool FBufferPostStackSettings::HasEffect() const
     return Result;
 }
 
-int32 FBufferPostStackSettings::GetNumValidLayers() const
+int32 FBufferPostQueueSettings::GetNumValidLayers() const
 {
     int32 Result = 0;
 
@@ -43,7 +43,7 @@ int32 FBufferPostStackSettings::GetNumValidLayers() const
     return Result;
 }
 
-void FBufferPostStack::Process(UTextureRenderTarget2D* InOutRT, UTextureRenderTarget2D* IntermediateRT, const FBufferPostStackSettings& Settings)
+void FBufferPostQueue::Process(UTextureRenderTarget2D* InOutRT, UTextureRenderTarget2D* IntermediateRT, const FBufferPostQueueSettings& Settings)
 {
     // Enabled, and has at least one valid layer.
     if (Settings.HasEffect())

@@ -4,8 +4,8 @@
 
 #include "PropertyEditorModule.h"
 
-#include "BufferPostStack.h"
-#include "BufferPostStackTypeCustomization.h"
+#include "BufferPostQueue.h"
+#include "BufferPostQueueTypeCustomization.h"
 
 #define LOCTEXT_NAMESPACE "FBufferPostProcessorEditorModule"
 
@@ -13,8 +13,8 @@ void FBufferPostProcessorEditorModule::StartupModule()
 {
     // This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
     FPropertyEditorModule& PropertyEditorModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
-    PropertyEditorModule.RegisterCustomPropertyTypeLayout(FBufferPostStackSettings::StaticStruct()->GetFName(), FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FBufferPostStackSettingsTypeCustomization::MakeInstance));
-    PropertyEditorModule.RegisterCustomPropertyTypeLayout(FBufferPostStackLayer::StaticStruct()->GetFName(), FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FBufferPostStackLayerTypeCustomization::MakeInstance));
+    PropertyEditorModule.RegisterCustomPropertyTypeLayout(FBufferPostQueueSettings::StaticStruct()->GetFName(), FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FBufferPostQueueSettingsTypeCustomization::MakeInstance));
+    PropertyEditorModule.RegisterCustomPropertyTypeLayout(FBufferPostQueueLayer::StaticStruct()->GetFName(), FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FBufferPostQueueLayerTypeCustomization::MakeInstance));
     //PropertyEditorModule.NotifyCustomizationModuleChanged();
 }
 
@@ -25,8 +25,8 @@ void FBufferPostProcessorEditorModule::ShutdownModule()
     if (FModuleManager::Get().IsModuleLoaded("PropertyEditor"))
     {
         FPropertyEditorModule& PropertyEditorModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
-        PropertyEditorModule.UnregisterCustomPropertyTypeLayout(FBufferPostStackSettings::StaticStruct()->GetFName());
-        PropertyEditorModule.UnregisterCustomPropertyTypeLayout(FBufferPostStackLayer::StaticStruct()->GetFName());
+        PropertyEditorModule.UnregisterCustomPropertyTypeLayout(FBufferPostQueueSettings::StaticStruct()->GetFName());
+        PropertyEditorModule.UnregisterCustomPropertyTypeLayout(FBufferPostQueueLayer::StaticStruct()->GetFName());
         //PropertyEditorModule.NotifyCustomizationModuleChanged();
     }
 }

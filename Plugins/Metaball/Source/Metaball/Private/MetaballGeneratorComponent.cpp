@@ -1,13 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "MetaballGeneratorComponent.h"
 
 #include "Kismet/KismetRenderingLibrary.h"
 #include "Engine/Texture2DDynamic.h"
 
 #include "MetaballGeneratorShader.h"
-#include "BufferPostStack.h"
 
 // Sets default values for this component's properties
 UMetaballGeneratorComponent::UMetaballGeneratorComponent()
@@ -96,7 +94,7 @@ void UMetaballGeneratorComponent::Process()
 
     FMetaballGeneratorShader::RenderMetaball(OutputRT, FIntPoint(OutputRT->SizeX, OutputRT->SizeY), ShaderParam);
 
-    FBufferPostStack::Process(OutputRT, IntermediateRT, PostStackSettings);
+    FBufferPostQueue::Process(OutputRT, IntermediateRT, PostStackSettings);
     
     ProcessDelegate.Broadcast();
 }

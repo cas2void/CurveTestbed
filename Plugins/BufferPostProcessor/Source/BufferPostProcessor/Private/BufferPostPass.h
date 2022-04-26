@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "BufferPostStack.h"
+#include "BufferPostQueue.h"
 #include "BufferRampPass.h"
 #include "BufferPostPass.generated.h"
 

@@ -6,9 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "Engine/TextureRenderTarget2D.h"
 #include "Curves/CurveLinearColor.h"
-#include "BufferPostStack.h"
+#include "BufferPostQueue.h"
 #include "MetaballGeneratorComponent.generated.h"
-
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class METABALL_API UMetaballGeneratorComponent : public UActorComponent
@@ -54,7 +53,7 @@ protected:
     UTextureRenderTarget2D* IntermediateRT;
 
     UPROPERTY(EditAnywhere)
-    FBufferPostStackSettings PostStackSettings;
+    FBufferPostQueueSettings PostStackSettings;
 
     //
     // Ramp

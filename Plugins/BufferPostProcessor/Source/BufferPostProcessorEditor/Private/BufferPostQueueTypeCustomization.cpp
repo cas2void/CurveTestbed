@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "BufferPostStackTypeCustomization.h"
+#include "BufferPostQueueTypeCustomization.h"
 
 #include "DetailLayoutBuilder.h"
 #include "PropertyHandle.h"
@@ -9,20 +9,20 @@
 #include "Widgets/Input/SComboBox.h"
 #include "Widgets/Text/STextBlock.h"
 
-#include "BufferPostStack.h"
+#include "BufferPostQueue.h"
 
-#define LOCTEXT_NAMESPACE "BufferPostStackTypeCustomization"
+#define LOCTEXT_NAMESPACE "BufferPostQueueTypeCustomization"
 
-TSharedRef<IPropertyTypeCustomization> FBufferPostStackSettingsTypeCustomization::MakeInstance()
+TSharedRef<IPropertyTypeCustomization> FBufferPostQueueSettingsTypeCustomization::MakeInstance()
 {
-    return MakeShareable(new FBufferPostStackSettingsTypeCustomization);
+    return MakeShareable(new FBufferPostQueueSettingsTypeCustomization);
 }
 
-void FBufferPostStackSettingsTypeCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> PropertyHandle, FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& CustomizationUtils)
+void FBufferPostQueueSettingsTypeCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> PropertyHandle, FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& CustomizationUtils)
 {
     PropertyHandle->MarkResetToDefaultCustomized(true);
 
-    TSharedRef<IPropertyHandle> EnabledProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostStackSettings, bEnabled)).ToSharedRef();
+    TSharedRef<IPropertyHandle> EnabledProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostQueueSettings, bEnabled)).ToSharedRef();
     HeaderRow
         .NameContent()
         [
@@ -34,9 +34,9 @@ void FBufferPostStackSettingsTypeCustomization::CustomizeHeader(TSharedRef<IProp
         ];
 }
 
-void FBufferPostStackSettingsTypeCustomization::CustomizeChildren(TSharedRef<IPropertyHandle> PropertyHandle, IDetailChildrenBuilder& ChildBuilder, IPropertyTypeCustomizationUtils& CustomizationUtils)
+void FBufferPostQueueSettingsTypeCustomization::CustomizeChildren(TSharedRef<IPropertyHandle> PropertyHandle, IDetailChildrenBuilder& ChildBuilder, IPropertyTypeCustomizationUtils& CustomizationUtils)
 {
-    TSharedRef<IPropertyHandle> LayersProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostStackSettings, Layers)).ToSharedRef();
+    TSharedRef<IPropertyHandle> LayersProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostQueueSettings, Layers)).ToSharedRef();
     LayersProperty->MarkResetToDefaultCustomized(true);
 
     ChildBuilder
@@ -44,7 +44,7 @@ void FBufferPostStackSettingsTypeCustomization::CustomizeChildren(TSharedRef<IPr
         .IsEnabled(TAttribute<bool>::Create(TAttribute<bool>::FGetter::CreateLambda(
             [PropertyHandle]()
             {
-                TSharedRef<IPropertyHandle> EnabledProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostStackSettings, bEnabled)).ToSharedRef();
+                TSharedRef<IPropertyHandle> EnabledProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostQueueSettings, bEnabled)).ToSharedRef();
                 bool EnabledValue;
                 EnabledProperty->GetValue(EnabledValue);
                 return EnabledValue;
@@ -52,12 +52,12 @@ void FBufferPostStackSettingsTypeCustomization::CustomizeChildren(TSharedRef<IPr
     )));
 }
 
-TSharedRef<IPropertyTypeCustomization> FBufferPostStackLayerTypeCustomization::MakeInstance()
+TSharedRef<IPropertyTypeCustomization> FBufferPostQueueLayerTypeCustomization::MakeInstance()
 {
-    return MakeShareable(new FBufferPostStackLayerTypeCustomization);
+    return MakeShareable(new FBufferPostQueueLayerTypeCustomization);
 }
 
-void FBufferPostStackLayerTypeCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> PropertyHandle, FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& CustomizationUtils)
+void FBufferPostQueueLayerTypeCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> PropertyHandle, FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& CustomizationUtils)
 {
     static const FString kEmptyPassNameString(TEXT("None"));
 
@@ -83,8 +83,8 @@ void FBufferPostStackLayerTypeCustomization::CustomizeHeader(TSharedRef<IPropert
         Outer = OuterObjects[0];
     }
 
-    TSharedRef<IPropertyHandle> EnabledProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostStackLayer, bEnabled)).ToSharedRef();
-    TSharedRef<IPropertyHandle> PassProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostStackLayer, Pass)).ToSharedRef();
+    TSharedRef<IPropertyHandle> EnabledProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostQueueLayer, bEnabled)).ToSharedRef();
+    TSharedRef<IPropertyHandle> PassProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostQueueLayer, Pass)).ToSharedRef();
 
     // Current `Pass` type class
     UClass* PassClass = nullptr;
@@ -160,13 +160,13 @@ void FBufferPostStackLayerTypeCustomization::CustomizeHeader(TSharedRef<IPropert
         ];
 }
 
-void FBufferPostStackLayerTypeCustomization::CustomizeChildren(TSharedRef<IPropertyHandle> PropertyHandle, IDetailChildrenBuilder& ChildBuilder, IPropertyTypeCustomizationUtils& CustomizationUtils)
+void FBufferPostQueueLayerTypeCustomization::CustomizeChildren(TSharedRef<IPropertyHandle> PropertyHandle, IDetailChildrenBuilder& ChildBuilder, IPropertyTypeCustomizationUtils& CustomizationUtils)
 {
-    TSharedRef<IPropertyHandle> PassProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostStackLayer, Pass)).ToSharedRef();
+    TSharedRef<IPropertyHandle> PassProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostQueueLayer, Pass)).ToSharedRef();
     TSharedPtr<IPropertyHandle> PassSettingsProperty = PassProperty->GetChildHandle(FName(TEXT("PassSettings")));
     if (PassSettingsProperty)
     {
-        TSharedRef<IPropertyHandle> EnabledProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostStackLayer, bEnabled)).ToSharedRef();
+        TSharedRef<IPropertyHandle> EnabledProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostQueueLayer, bEnabled)).ToSharedRef();
         auto IsEnabledLamda = [EnabledProperty]()
         {
             bool EnabledValue;
@@ -184,7 +184,7 @@ void FBufferPostStackLayerTypeCustomization::CustomizeChildren(TSharedRef<IPrope
     }
 }
 
-TSharedPtr<FString> FBufferPostStackLayerTypeCustomization::GetPassTypeOption(UClass* PassClass)
+TSharedPtr<FString> FBufferPostQueueLayerTypeCustomization::GetPassTypeOption(UClass* PassClass)
 {
     TSharedPtr<FString> Result;
 

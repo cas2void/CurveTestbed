@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "Engine/TextureRenderTarget2D.h"
-#include "BufferPostStack.generated.h"
+#include "BufferPostQueue.generated.h"
 
 /**
  *
@@ -26,7 +26,7 @@ public:
  *
  */
 USTRUCT()
-struct BUFFERPOSTPROCESSOR_API FBufferPostStackLayer
+struct BUFFERPOSTPROCESSOR_API FBufferPostQueueLayer
 {
     GENERATED_BODY()
 
@@ -44,7 +44,7 @@ public:
  *
  */
 USTRUCT()
-struct BUFFERPOSTPROCESSOR_API FBufferPostStackSettings
+struct BUFFERPOSTPROCESSOR_API FBufferPostQueueSettings
 {
     GENERATED_BODY()
 
@@ -53,7 +53,7 @@ public:
     bool bEnabled = true;
 
     UPROPERTY(EditAnywhere)
-    TArray<FBufferPostStackLayer> Layers;
+    TArray<FBufferPostQueueLayer> Layers;
 
     bool HasEffect() const;
 
@@ -63,8 +63,8 @@ public:
 /**
  *
  */
-class BUFFERPOSTPROCESSOR_API FBufferPostStack
+class BUFFERPOSTPROCESSOR_API FBufferPostQueue
 {
 public:
-    static void Process(UTextureRenderTarget2D* InOutRT, UTextureRenderTarget2D* IntermediateRT, const FBufferPostStackSettings& Settings);
+    static void Process(UTextureRenderTarget2D* InOutRT, UTextureRenderTarget2D* IntermediateRT, const FBufferPostQueueSettings& Settings);
 };
