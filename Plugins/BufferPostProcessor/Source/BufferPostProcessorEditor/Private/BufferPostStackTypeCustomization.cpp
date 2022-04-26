@@ -20,6 +20,8 @@ TSharedRef<IPropertyTypeCustomization> FBufferPostStackSettingsTypeCustomization
 
 void FBufferPostStackSettingsTypeCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> PropertyHandle, FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& CustomizationUtils)
 {
+    PropertyHandle->MarkResetToDefaultCustomized(true);
+
     TSharedRef<IPropertyHandle> EnabledProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostStackSettings, bEnabled)).ToSharedRef();
     HeaderRow
         .NameContent()
@@ -35,6 +37,8 @@ void FBufferPostStackSettingsTypeCustomization::CustomizeHeader(TSharedRef<IProp
 void FBufferPostStackSettingsTypeCustomization::CustomizeChildren(TSharedRef<IPropertyHandle> PropertyHandle, IDetailChildrenBuilder& ChildBuilder, IPropertyTypeCustomizationUtils& CustomizationUtils)
 {
     TSharedRef<IPropertyHandle> LayersProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostStackSettings, Layers)).ToSharedRef();
+    LayersProperty->MarkResetToDefaultCustomized(true);
+
     ChildBuilder
         .AddProperty(LayersProperty)
         .IsEnabled(TAttribute<bool>::Create(TAttribute<bool>::FGetter::CreateLambda(
@@ -56,6 +60,8 @@ TSharedRef<IPropertyTypeCustomization> FBufferPostStackLayerTypeCustomization::M
 void FBufferPostStackLayerTypeCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> PropertyHandle, FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& CustomizationUtils)
 {
     static const FString kEmptyPassNameString(TEXT("None"));
+
+    PropertyHandle->MarkResetToDefaultCustomized(true);
 
     // Initialize menu options.
     // `PassTypeClassMap` and `PassTypeOptions` are defined as class member, as they need to be accessed in slate delegates
