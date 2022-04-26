@@ -80,15 +80,24 @@ void FBufferPostStackLayerTypeCustomization::CustomizeHeader(TSharedRef<IPropert
     TSharedRef<IPropertyHandle> EnabledProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostStackLayer, bEnabled)).ToSharedRef();
     TSharedRef<IPropertyHandle> PassProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostStackLayer, Pass)).ToSharedRef();
 
-    // Get combo box label from current `PassObject`
+    // Current `Pass` type class
+    UClass* PassClass = nullptr;
     UObject* PassObject = nullptr;
     PassProperty->GetValue(PassObject);
-    FText PassTypeText = FText::FromString(kEmptyPassNameString);
     if (PassObject)
     {
-        UClass* PassClass = PassObject->GetClass();
+        PassClass = PassObject->GetClass();
+    }
+
+    // Get combo box label from current `PassObject`
+    FText PassTypeText = FText::FromString(kEmptyPassNameString);
+    if (PassClass)
+    {
         PassTypeText = FText::FromString(UBufferPostPass::GetDisplayName(PassClass));
     }
+
+    // Set initial selected item from current `PassObject`
+    TSharedPtr<FString> SelectedPassType = GetPassTypeOption(PassClass);
 
     HeaderRow
         .NameContent()
@@ -133,6 +142,7 @@ void FBufferPostStackLayerTypeCustomization::CustomizeHeader(TSharedRef<IPropert
                     }
                 }
             ))
+            .InitiallySelectedItem(SelectedPassType)
             [
                 SNew(STextBlock)
                 .Text(PassTypeText)
@@ -166,6 +176,19 @@ void FBufferPostStackLayerTypeCustomization::CustomizeChildren(TSharedRef<IPrope
             ChildBuilder.AddProperty(ChildHandle).IsEnabled(TAttribute<bool>::Create(TAttribute<bool>::FGetter::CreateLambda(IsEnabledLamda)));
         }
     }
+}
+
+TSharedPtr<FString> FBufferPostStackLayerTypeCustomization::GetPassTypeOption(UClass* PassClass)
+{
+    TSharedPtr<FString> Result;
+
+    const TSharedPtr<FString>* PassTypePtr = PassTypeClassMap.FindKey(PassClass);
+    if (PassTypePtr)
+    {
+        Result = *PassTypePtr;
+    }
+
+    return Result;
 }
 
 #undef LOCTEXT_NAMESPACE

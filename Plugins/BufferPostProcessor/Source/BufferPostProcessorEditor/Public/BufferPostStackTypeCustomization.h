@@ -39,4 +39,6 @@ public:
 protected:
     TArray<TSharedPtr<FString>> PassTypeOptions;
     TMap<TSharedPtr<FString>, UClass*> PassTypeClassMap;
+
+    TSharedPtr<FString> GetPassTypeOption(UClass* PassClass);
 };
