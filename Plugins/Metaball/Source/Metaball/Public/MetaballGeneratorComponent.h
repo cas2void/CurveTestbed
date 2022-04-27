@@ -53,7 +53,7 @@ protected:
     UTextureRenderTarget2D* IntermediateRT;
 
     UPROPERTY(EditAnywhere)
-    FBufferPostQueueSettings PostStackSettings;
+    FBufferPostQueueSettings PostQueueSettings;
 
     //
     // Ramp

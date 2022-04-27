@@ -84,21 +84,13 @@ void FMetaballGeneratorComponentDetailCustomization::CustomizeDetails(IDetailLay
                 ColorRampProperty->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda(OnPropertyValueChanged));
             }
 
-            TSharedPtr<IPropertyHandle> PostStackSettingsProperty = DetailBuilder.GetProperty(TEXT("PostStackSettings"));
-            if (PostStackSettingsProperty)
+            TSharedPtr<IPropertyHandle> PostQueueSettingsProperty = DetailBuilder.GetProperty(TEXT("PostQueueSettings"));
+            if (PostQueueSettingsProperty)
             {
-                //PostStackSettingsProperty->SetOnPropertyValueChanged(FSimpleDelegate::CreateSP(this, &FMetaballGeneratorComponentDetailCustomization::OnPostStackSettingsChanged, MetaballGenerator));
-                //PostStackSettingsProperty->SetOnChildPropertyValueChanged(FSimpleDelegate::CreateSP(this, &FMetaballGeneratorComponentDetailCustomization::OnPostStackSettingsChanged, MetaballGenerator));
+                PostQueueSettingsProperty->SetOnChildPropertyValueChanged(FSimpleDelegate::CreateLambda(ToRenderMetaballLamda));
             }
         }
     }
 }
-
-void FMetaballGeneratorComponentDetailCustomization::OnPostStackSettingsChanged(UMetaballGeneratorComponent* MetaballGenerator)
-{
-    MetaballGenerator->Process();
-}
-
-
 
 #undef LOCTEXT_NAMESPACE

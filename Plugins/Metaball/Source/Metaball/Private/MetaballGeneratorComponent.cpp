@@ -94,7 +94,7 @@ void UMetaballGeneratorComponent::Process()
 
     FMetaballGeneratorShader::RenderMetaball(OutputRT, FIntPoint(OutputRT->SizeX, OutputRT->SizeY), ShaderParam);
 
-    FBufferPostQueue::Process(OutputRT, IntermediateRT, PostStackSettings);
+    FBufferPostQueue::Process(OutputRT, IntermediateRT, PostQueueSettings);
     
     ProcessDelegate.Broadcast();
 }

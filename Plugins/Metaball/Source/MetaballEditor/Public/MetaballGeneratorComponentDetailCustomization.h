@@ -18,7 +18,4 @@ public:
     // IDetailCustomization Interfaces
     //
     virtual void CustomizeDetails(IDetailLayoutBuilder& DetailBuilder) override;
-
-protected:
-    void OnPostStackSettingsChanged(class UMetaballGeneratorComponent* MetaballGenerator);
 };
