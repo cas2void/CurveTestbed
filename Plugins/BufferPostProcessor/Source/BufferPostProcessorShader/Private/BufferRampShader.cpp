@@ -4,6 +4,7 @@
 
 #include "GlobalShader.h"
 #include "RHIResources.h"
+#include "RHICommandList.h"
 #include "Modules/ModuleManager.h"
 #include "RendererInterface.h"
 #include "ScreenRendering.h"
@@ -23,34 +24,42 @@ public:
     FBufferRampShaderPS(const ShaderMetaType::CompiledShaderInitializerType& Initializer)
         : FGlobalShader(Initializer)
     {
-        MyVectorParam.Bind(Initializer.ParameterMap, TEXT("MyVector"));
-        MyTextureParam.Bind(Initializer.ParameterMap, TEXT("MyTexture"));
-        MyTextureSamplerParam.Bind(Initializer.ParameterMap, TEXT("MyTextureSampler"));
+        InputTextureParam.Bind(Initializer.ParameterMap, TEXT("InputTexture"));
+        InputTextureSamplerParam.Bind(Initializer.ParameterMap, TEXT("InputTextureSampler"));
+        RampTextureParam.Bind(Initializer.ParameterMap, TEXT("RampTexture"));
+        RampTextureSamplerParam.Bind(Initializer.ParameterMap, TEXT("RampTextureSampler"));
     }
 
     void SetParameters(FRHICommandList& RHICmdList, const FBufferRampShaderParameter& ShaderParam)
     {
-        SetShaderValue(RHICmdList, RHICmdList.GetBoundPixelShader(), MyVectorParam, ShaderParam.MyVector);
-        if (ShaderParam.MyTexture.IsValid())
+        if (ShaderParam.InputTextureResource)
         {
-            SetTextureParameter(RHICmdList, RHICmdList.GetBoundPixelShader(), MyTextureParam, MyTextureSamplerParam,
-                TStaticSamplerState<SF_Bilinear>::GetRHI(), ShaderParam.MyTexture->GetResource()->GetTexture2DRHI());
+            SetTextureParameter(RHICmdList, RHICmdList.GetBoundPixelShader(), InputTextureParam, InputTextureSamplerParam,
+                TStaticSamplerState<SF_Bilinear>::GetRHI(), ShaderParam.InputTextureResource->GetTexture2DRHI());
+        }
+
+        if (ShaderParam.RampTextureResource)
+        {
+            SetTextureParameter(RHICmdList, RHICmdList.GetBoundPixelShader(), RampTextureParam, RampTextureSamplerParam,
+                TStaticSamplerState<SF_Bilinear>::GetRHI(), ShaderParam.RampTextureResource->GetTexture2DRHI());
         }
     }
 
 private:
-    LAYOUT_FIELD(FShaderParameter, MyVectorParam);
-    LAYOUT_FIELD(FShaderResourceParameter, MyTextureParam);
-    LAYOUT_FIELD(FShaderResourceParameter, MyTextureSamplerParam);
-
+    LAYOUT_FIELD(FShaderResourceParameter, InputTextureParam);
+    LAYOUT_FIELD(FShaderResourceParameter, InputTextureSamplerParam);
+    LAYOUT_FIELD(FShaderResourceParameter, RampTextureParam);
+    LAYOUT_FIELD(FShaderResourceParameter, RampTextureSamplerParam);
 };
 
 IMPLEMENT_GLOBAL_SHADER(FBufferRampShaderPS, "/BufferPostProcessorShaders/BufferRampShaderPS.usf", "MainPS", SF_Pixel);
 
-static void Render_RenderingThread(FRHICommandListImmediate& RHICmdList, const FTexture2DRHIRef& RHITexture, const FIntPoint& Size, const FBufferRampShaderParameter& ShaderParam)
+void FBufferRampShader::Render(FRHICommandListImmediate& RHICmdList, FTextureRenderTargetResource* OutputTextureResource, const FIntPoint& Size, const FBufferRampShaderParameter& ShaderParam)
 {
+    check(OutputTextureResource);
+
     IRendererModule& RendererModule = FModuleManager::GetModuleChecked<IRendererModule>("Renderer");
-    FRHIRenderPassInfo RenderPassInfo(RHITexture, ERenderTargetActions::Load_Store);
+    FRHIRenderPassInfo RenderPassInfo(OutputTextureResource->GetRenderTargetTexture(), ERenderTargetActions::Load_Store);
     RHICmdList.BeginRenderPass(RenderPassInfo, TEXT("BufferRamp"));
     {
         RHICmdList.SetViewport(0.0f, 0.0f, 0.0f, static_cast<float>(Size.X), static_cast<float>(Size.Y), 1.0f);
@@ -85,14 +94,4 @@ static void Render_RenderingThread(FRHICommandListImmediate& RHICmdList, const F
         );
     }
     RHICmdList.EndRenderPass();
-}
-
-void FBufferRampShader::Render(UTextureRenderTarget2D* RenderTarget, const FIntPoint& Size, const FBufferRampShaderParameter& ShaderParam)
-{
-    ENQUEUE_RENDER_COMMAND(MetaballGenerator)(
-        [RenderTarget, Size, ShaderParam](FRHICommandListImmediate& RHICmdList)
-        {
-            Render_RenderingThread(RHICmdList, RenderTarget->GetRenderTargetResource()->GetRenderTargetTexture(), Size, ShaderParam);
-        }
-    );
 }

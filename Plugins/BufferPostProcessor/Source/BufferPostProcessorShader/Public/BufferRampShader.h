@@ -3,14 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "TextureResource.h"
 #include "RHICommandList.h"
-#include "Engine/TextureRenderTarget2D.h"
-#include "Engine/Texture2DDynamic.h"
 
 struct FBufferRampShaderParameter
 {
-    FVector MyVector;
-    TWeakObjectPtr<UTexture2DDynamic> MyTexture;
+    FTextureRenderTargetResource* InputTextureResource;
+    FTextureResource* RampTextureResource;
 };
 
 /**
@@ -19,5 +18,5 @@ struct FBufferRampShaderParameter
 class BUFFERPOSTPROCESSORSHADER_API FBufferRampShader
 {
 public:
-    static void Render(UTextureRenderTarget2D* RenderTarget, const FIntPoint& Size, const FBufferRampShaderParameter& ShaderParam);
+    static void Render(FRHICommandListImmediate& RHICmdList, FTextureRenderTargetResource* OutputTextureResource, const FIntPoint& Size, const FBufferRampShaderParameter& ShaderParam);
 };

@@ -22,8 +22,6 @@ void MainPS(FScreenVertexOutput Input, out float4 OutColor : SV_Target0)
 	
 	float intensity = intensity0 + intensity1 + intensity2;
 	float normalizedIntensity = saturate(intensity);
-	
-	float2 colorRampUV = float2(normalizedIntensity, 0);
-	float4 rampedColor = ColorRampTexture.Sample(ColorRampTextureSampler, colorRampUV);
-	OutColor = rampedColor;
+
+	OutColor = float4(normalizedIntensity, normalizedIntensity, normalizedIntensity, 1);
 }

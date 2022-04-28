@@ -72,18 +72,6 @@ void FMetaballGeneratorComponentDetailCustomization::CustomizeDetails(IDetailLay
                 Point2Property->SetOnChildPropertyValueChanged(FSimpleDelegate::CreateLambda(ToRenderMetaballLamda));
             }
 
-            TSharedPtr<IPropertyHandle> ColorRampProperty = DetailBuilder.GetProperty(TEXT("ColorRamp"));
-            if (ColorRampProperty)
-            {
-                auto OnPropertyValueChanged = [MetaballGenerator, this]()
-                {
-                    MetaballGenerator->UpdateColorRampTexture();
-                    MetaballGenerator->Process();
-                };
-
-                ColorRampProperty->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda(OnPropertyValueChanged));
-            }
-
             TSharedPtr<IPropertyHandle> PostQueueSettingsProperty = DetailBuilder.GetProperty(TEXT("PostQueueSettings"));
             if (PostQueueSettingsProperty)
             {

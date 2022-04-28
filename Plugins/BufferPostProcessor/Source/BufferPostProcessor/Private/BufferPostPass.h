@@ -21,6 +21,7 @@ class BUFFERPOSTPROCESSOR_API UBufferRampPass : public UBufferPostPass
     //
 public:
     virtual void PostInitProperties() override;
+    virtual void PostLoad() override;
 
     //
     // UBufferPostPass Interfaces

@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Engine/TextureRenderTarget2D.h"
-#include "Curves/CurveLinearColor.h"
 #include "BufferPostQueue.h"
 #include "MetaballGeneratorComponent.generated.h"
 
@@ -54,22 +53,6 @@ protected:
 
     UPROPERTY(EditAnywhere)
     FBufferPostQueueSettings PostQueueSettings;
-
-    //
-    // Ramp
-    //
-public:
-    void UpdateColorRampTexture();
-    const FRuntimeCurveLinearColor& GetColorRamp() const { return ColorRamp; }
-    
-protected:
-    void CreateColorRampTexture();
-
-    UPROPERTY(EditAnywhere)
-    FRuntimeCurveLinearColor ColorRamp;
-
-    UPROPERTY(VisibleInstanceOnly, Transient, AdvancedDisplay)
-    class UTexture2DDynamic* ColorRampTexture;
 
     //
     // Metaball

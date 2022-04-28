@@ -2,6 +2,9 @@
 
 #include "BufferRampPass.h"
 
+#include "RenderingThread.h"
+#include "RHICommandList.h"
+
 #include "BufferRampShader.h"
 #include "BufferPostProcessorShaderUtility.h"
 
@@ -18,11 +21,18 @@ void FBufferRampPass::Process(UTextureRenderTarget2D* InputRT, UTextureRenderTar
         FBufferPostProcessorShaderUtility::RenderColorRampToTexture(PassSettings.RampCurve, RampTexture);
     }
 
-    FBufferRampShaderParameter ShaderParameter;
-    
-    FIntPoint Size(OutputRT->SizeX, OutputRT->SizeY);
+    ENQUEUE_RENDER_COMMAND(BufferRampPass)(
+        [InputRT, OutputRT, RampTexture](FRHICommandListImmediate& RHICmdList)
+        {
+            FBufferRampShaderParameter ShaderParameter;
+            ShaderParameter.InputTextureResource = InputRT->GetRenderTargetResource();
+            ShaderParameter.RampTextureResource = RampTexture->GetResource();
 
-    FBufferRampShader::Render(OutputRT, Size, ShaderParameter);
+            FIntPoint Size(OutputRT->SizeX, OutputRT->SizeY);
+
+            FBufferRampShader::Render(RHICmdList, OutputRT->GetRenderTargetResource(), Size, ShaderParameter);
+        }
+    );
 }
 
 UTexture2DDynamic* FBufferRampPass::CreateRampTexture()

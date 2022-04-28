@@ -3,7 +3,6 @@
 #include "MetaballGeneratorComponent.h"
 
 #include "Kismet/KismetRenderingLibrary.h"
-#include "Engine/Texture2DDynamic.h"
 
 #include "MetaballGeneratorShader.h"
 
@@ -51,7 +50,6 @@ void UMetaballGeneratorComponent::SetSize(const FIntPoint& Size)
         // RenderTarget could be nullptr, when this function gets called in Constructor, where current World of `this` is nullptr.
         if (OutputRT && IntermediateRT)
         {
-            CreateColorRampTexture();
             // Reprocess as the size of cooking render target has been changed.
             Process();
 
@@ -65,24 +63,6 @@ UTextureRenderTarget2D* UMetaballGeneratorComponent::GetOutput()
     return OutputRT;
 }
 
-void UMetaballGeneratorComponent::CreateColorRampTexture()
-{
-    if (!ColorRampTexture)
-    {
-        FTexture2DDynamicCreateInfo CreateInfo(PF_B8G8R8A8, false, true, TF_Bilinear, AM_Clamp);
-        ColorRampTexture = UTexture2DDynamic::Create(256, 1, CreateInfo);
-
-        FMetaballGeneratorShader::WaitForGPU();
-
-        UpdateColorRampTexture();
-    }
-}
-
-void UMetaballGeneratorComponent::UpdateColorRampTexture()
-{
-    FMetaballGeneratorShader::RenderColorRampToTexture(ColorRamp, ColorRampTexture);
-}
-
 void UMetaballGeneratorComponent::Process()
 {
     FMetaballGeneratorShaderParameter ShaderParam;
@@ -90,7 +70,6 @@ void UMetaballGeneratorComponent::Process()
     ShaderParam.Point1 = Point1;
     ShaderParam.Point2 = Point2;
     ShaderParam.AspectRatio = static_cast<float>(OutputRT->SizeX) / static_cast<float>(OutputRT->SizeY);
-    ShaderParam.ColorRampTexture = ColorRampTexture;
 
     FMetaballGeneratorShader::RenderMetaball(OutputRT, FIntPoint(OutputRT->SizeX, OutputRT->SizeY), ShaderParam);
 

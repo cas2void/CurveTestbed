@@ -9,10 +9,16 @@ void UBufferRampPass::PostInitProperties()
     Super::PostInitProperties();
 
     RampTexture = FBufferRampPass::CreateRampTexture();
-    FBufferPostProcessorShaderUtility::RenderColorRampToTexture(PassSettings.RampCurve, RampTexture);
 
     PassSettings.OnRampCurveModified().RemoveAll(this);
     PassSettings.OnRampCurveModified().AddUObject(this, &UBufferRampPass::OnRampCurveModified);
+}
+
+void UBufferRampPass::PostLoad()
+{
+    Super::PostLoad();
+
+    FBufferPostProcessorShaderUtility::RenderColorRampToTexture(PassSettings.RampCurve, RampTexture);
 }
 
 void UBufferRampPass::Process(UTextureRenderTarget2D* InputRT, UTextureRenderTarget2D* OutputRT)

@@ -28,8 +28,6 @@ public:
         Point1Param.Bind(Initializer.ParameterMap, TEXT("Point1"));
         Point2Param.Bind(Initializer.ParameterMap, TEXT("Point2"));
         AspectRatioParam.Bind(Initializer.ParameterMap, TEXT("AspectRatio"));
-        ColorRampTextureParam.Bind(Initializer.ParameterMap, TEXT("ColorRampTexture"));
-        ColorRampTextureSamplerParam.Bind(Initializer.ParameterMap, TEXT("ColorRampTextureSampler"));
     }
 
     void SetParameters(FRHICommandList& RHICmdList, const FMetaballGeneratorShaderParameter& ShaderParam)
@@ -38,11 +36,6 @@ public:
         SetShaderValue(RHICmdList, RHICmdList.GetBoundPixelShader(), Point1Param, ShaderParam.Point1);
         SetShaderValue(RHICmdList, RHICmdList.GetBoundPixelShader(), Point2Param, ShaderParam.Point2);
         SetShaderValue(RHICmdList, RHICmdList.GetBoundPixelShader(), AspectRatioParam, ShaderParam.AspectRatio);
-        if (ShaderParam.ColorRampTexture.IsValid())
-        {
-            SetTextureParameter(RHICmdList, RHICmdList.GetBoundPixelShader(), ColorRampTextureParam, ColorRampTextureSamplerParam,
-                TStaticSamplerState<SF_Bilinear>::GetRHI(), ShaderParam.ColorRampTexture->GetResource()->GetTexture2DRHI());
-        }
     }
 
 private:
@@ -50,8 +43,6 @@ private:
     LAYOUT_FIELD(FShaderParameter, Point1Param);
     LAYOUT_FIELD(FShaderParameter, Point2Param);
     LAYOUT_FIELD(FShaderParameter, AspectRatioParam);
-    LAYOUT_FIELD(FShaderResourceParameter, ColorRampTextureParam);
-    LAYOUT_FIELD(FShaderResourceParameter, ColorRampTextureSamplerParam);
 
 };
 
@@ -103,39 +94,6 @@ void FMetaballGeneratorShader::RenderMetaball(UTextureRenderTarget2D* RenderTarg
         [RenderTarget, Size, ShaderParam](FRHICommandListImmediate& RHICmdList)
         {
             RenderMetaballInternal_RenderingThread(RHICmdList, RenderTarget->GetRenderTargetResource()->GetRenderTargetTexture(), Size, ShaderParam);
-        }
-    );
-}
-
-void FMetaballGeneratorShader::WaitForGPU()
-{
-    FRenderCommandFence Fence;
-    Fence.BeginFence();
-    Fence.Wait();
-}
-
-void FMetaballGeneratorShader::RenderColorRampToTexture(const FRuntimeCurveLinearColor& ColorRamp, UTexture2DDynamic* ColorRampTexture)
-{
-    ENQUEUE_RENDER_COMMAND(UpdateColorRampTexture)(
-        [ColorRamp, ColorRampTexture](FRHICommandListImmediate& RHICmdList)
-        {
-            FRHITexture2D* RHITexture2D = ColorRampTexture->GetResource()->GetTexture2DRHI();
-            if (RHITexture2D)
-            {
-                uint32 DestStride;
-                FColor* Buffer = static_cast<FColor*>(RHILockTexture2D(RHITexture2D, 0, RLM_WriteOnly, DestStride, false));
-                if (Buffer)
-                {
-                    uint32 TextureWidth = RHITexture2D->GetSizeX();
-                    for (uint32 Index = 0; Index < TextureWidth; Index++)
-                    {
-                        float SampleTime = static_cast<float>(Index) / static_cast<float>(TextureWidth);
-                        FColor SampledColor = ColorRamp.GetLinearColorValue(SampleTime).ToFColor(false);
-                        Buffer[Index] = SampledColor;
-                    }
-                }
-                RHIUnlockTexture2D(RHITexture2D, 0, false);
-            }
         }
     );
 }
