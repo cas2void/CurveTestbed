@@ -11,17 +11,32 @@
 /**
  *
  */
-UCLASS(meta = (DisplayName = "Ramp"))
+UCLASS(editinlinenew, meta = (DisplayName = "Ramp"))
 class BUFFERPOSTPROCESSOR_API UBufferRampPass : public UBufferPostPass
 {
     GENERATED_BODY()
 
+    //
+    // UObject Interfaces
+    //
+public:
+    virtual void PostInitProperties() override;
+
+    //
+    // UBufferPostPass Interfaces
+    //
 public:
     UPROPERTY(EditAnywhere)
     FBufferRampPassSettings PassSettings;
 
-    virtual void Process(UTextureRenderTarget2D* InputRT, UTextureRenderTarget2D* OutputRT) override
-    {
-        FBufferRampPass::Process(InputRT, OutputRT, PassSettings);
-    }
+    virtual void Process(UTextureRenderTarget2D* InputRT, UTextureRenderTarget2D* OutputRT) override;
+
+    //
+    // Ramp Texture
+    //
+protected:
+    UPROPERTY(VisibleInstanceOnly, Transient, AdvancedDisplay)
+    UTexture2DDynamic* RampTexture;
+
+    void OnRampCurveModified();
 };

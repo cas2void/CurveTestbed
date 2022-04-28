@@ -6,6 +6,7 @@
 
 #include "BufferPostQueue.h"
 #include "BufferPostQueueTypeCustomization.h"
+#include "BufferRampPass.h"
 
 #define LOCTEXT_NAMESPACE "FBufferPostProcessorEditorModule"
 
@@ -15,6 +16,7 @@ void FBufferPostProcessorEditorModule::StartupModule()
     FPropertyEditorModule& PropertyEditorModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
     PropertyEditorModule.RegisterCustomPropertyTypeLayout(FBufferPostQueueSettings::StaticStruct()->GetFName(), FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FBufferPostQueueSettingsTypeCustomization::MakeInstance));
     PropertyEditorModule.RegisterCustomPropertyTypeLayout(FBufferPostQueueLayer::StaticStruct()->GetFName(), FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FBufferPostQueueLayerTypeCustomization::MakeInstance));
+    PropertyEditorModule.RegisterCustomPropertyTypeLayout(FBufferRampPassSettings::StaticStruct()->GetFName(), FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FBufferRampPassSettingsTypeCustomization::MakeInstance));
     //PropertyEditorModule.NotifyCustomizationModuleChanged();
 }
 
@@ -27,6 +29,7 @@ void FBufferPostProcessorEditorModule::ShutdownModule()
         FPropertyEditorModule& PropertyEditorModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
         PropertyEditorModule.UnregisterCustomPropertyTypeLayout(FBufferPostQueueSettings::StaticStruct()->GetFName());
         PropertyEditorModule.UnregisterCustomPropertyTypeLayout(FBufferPostQueueLayer::StaticStruct()->GetFName());
+        PropertyEditorModule.UnregisterCustomPropertyTypeLayout(FBufferRampPassSettings::StaticStruct()->GetFName());
         //PropertyEditorModule.NotifyCustomizationModuleChanged();
     }
 }

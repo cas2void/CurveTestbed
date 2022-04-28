@@ -87,9 +87,18 @@ void FMetaballGeneratorComponentDetailCustomization::CustomizeDetails(IDetailLay
             TSharedPtr<IPropertyHandle> PostQueueSettingsProperty = DetailBuilder.GetProperty(TEXT("PostQueueSettings"));
             if (PostQueueSettingsProperty)
             {
-                PostQueueSettingsProperty->SetOnChildPropertyValueChanged(FSimpleDelegate::CreateLambda(ToRenderMetaballLamda));
+                //PostQueueSettingsProperty->SetOnChildPropertyValueChanged(FSimpleDelegate::CreateLambda(ToRenderMetaballLamda));
+                PostQueueSettingsProperty->SetOnChildPropertyValueChanged(FSimpleDelegate::CreateSP(this, &FMetaballGeneratorComponentDetailCustomization::OnPostQueueModified, MetaballGenerator));
             }
         }
+    }
+}
+
+void FMetaballGeneratorComponentDetailCustomization::OnPostQueueModified(UMetaballGeneratorComponent* MetaballGenerator)
+{
+    if (MetaballGenerator)
+    {
+        MetaballGenerator->Process();
     }
 }
 

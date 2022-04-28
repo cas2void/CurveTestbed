@@ -42,3 +42,19 @@ protected:
 
     TSharedPtr<FString> GetPassTypeOption(UClass* PassClass);
 };
+
+/**
+ *
+ */
+class BUFFERPOSTPROCESSOREDITOR_API FBufferRampPassSettingsTypeCustomization : public IPropertyTypeCustomization
+{
+public:
+    static TSharedRef<IPropertyTypeCustomization> MakeInstance();
+
+    //
+    // IDetailCustomization Interfaces
+    //
+    virtual void CustomizeHeader(TSharedRef<IPropertyHandle> PropertyHandle, FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& CustomizationUtils) override;
+
+    virtual void CustomizeChildren(TSharedRef<IPropertyHandle> PropertyHandle, IDetailChildrenBuilder& ChildBuilder, IPropertyTypeCustomizationUtils& CustomizationUtils) override;
+};

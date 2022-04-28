@@ -3,17 +3,34 @@
 #include "BufferRampPass.h"
 
 #include "BufferRampShader.h"
+#include "BufferPostProcessorShaderUtility.h"
 
-void FBufferRampPass::Process(UTextureRenderTarget2D* InputRT, UTextureRenderTarget2D* OutputRT, const FBufferRampPassSettings& PassSettings)
+void FBufferRampPass::Process(UTextureRenderTarget2D* InputRT, UTextureRenderTarget2D* OutputRT, const FBufferRampPassSettings& PassSettings, UTexture2DDynamic* RampTexture)
 {
     check(InputRT);
     check(OutputRT);
     check(InputRT->SizeX == OutputRT->SizeX && InputRT->SizeY == OutputRT->SizeY);
     check(InputRT->RenderTargetFormat == OutputRT->RenderTargetFormat);
 
+    if (!RampTexture)
+    {
+        RampTexture = CreateRampTexture();
+        FBufferPostProcessorShaderUtility::RenderColorRampToTexture(PassSettings.RampCurve, RampTexture);
+    }
+
     FBufferRampShaderParameter ShaderParameter;
     
     FIntPoint Size(OutputRT->SizeX, OutputRT->SizeY);
 
     FBufferRampShader::Render(OutputRT, Size, ShaderParameter);
+}
+
+UTexture2DDynamic* FBufferRampPass::CreateRampTexture()
+{
+    FTexture2DDynamicCreateInfo CreateInfo(PF_B8G8R8A8, false, true, TF_Bilinear, AM_Clamp);
+    UTexture2DDynamic* Result = UTexture2DDynamic::Create(256, 1, CreateInfo);
+
+    FBufferPostProcessorShaderUtility::WaitForGPU();
+
+    return Result;
 }

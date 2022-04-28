@@ -10,6 +10,7 @@
 #include "Widgets/Text/STextBlock.h"
 
 #include "BufferPostQueue.h"
+#include "BufferRampPass.h"
 
 #define LOCTEXT_NAMESPACE "BufferPostQueueTypeCustomization"
 
@@ -127,8 +128,6 @@ void FBufferPostQueueLayerTypeCustomization::CustomizeHeader(TSharedRef<IPropert
             .OnSelectionChanged(SComboBox<TSharedPtr<FString>>::FOnSelectionChanged::CreateLambda(
                 [Outer, PassProperty, this](TSharedPtr<FString> NewSelection, ESelectInfo::Type SelectInfo)
                 {
-                    UE_LOG(LogTemp, Warning, TEXT("Selected: %s"), NewSelection ? *(*NewSelection) : TEXT(" Empty "));
-
                     if (Outer)
                     {
                         UClass** PassClassPtr = PassTypeClassMap.Find(NewSelection);
@@ -164,22 +163,33 @@ void FBufferPostQueueLayerTypeCustomization::CustomizeChildren(TSharedRef<IPrope
 {
     TSharedRef<IPropertyHandle> PassProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostQueueLayer, Pass)).ToSharedRef();
     TSharedPtr<IPropertyHandle> PassSettingsProperty = PassProperty->GetChildHandle(FName(TEXT("PassSettings")));
+    TSharedRef<IPropertyHandle> EnabledProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostQueueLayer, bEnabled)).ToSharedRef();
+    auto IsEnabledLamda = [EnabledProperty]()
+    {
+        bool EnabledValue;
+        EnabledProperty->GetValue(EnabledValue);
+        return EnabledValue;
+    };
+    
     if (PassSettingsProperty)
     {
-        TSharedRef<IPropertyHandle> EnabledProperty = PropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FBufferPostQueueLayer, bEnabled)).ToSharedRef();
-        auto IsEnabledLamda = [EnabledProperty]()
-        {
-            bool EnabledValue;
-            EnabledProperty->GetValue(EnabledValue);
-            return EnabledValue;
-        };
+        // Enumerate children of `PassSettings`
+        ChildBuilder.AddProperty(PassSettingsProperty.ToSharedRef()).IsEnabled(TAttribute<bool>::Create(TAttribute<bool>::FGetter::CreateLambda(IsEnabledLamda)));
 
-        uint32 NumChildren;
-        PassSettingsProperty->GetNumChildren(NumChildren);
-        for (uint32 Index = 0; Index < NumChildren; Index++)
+        // Enumerate childern of `Pass`, except `PassSettings`
+        TSharedPtr<IPropertyHandle> ParentHandle = PassSettingsProperty->GetParentHandle();
+        if (ParentHandle)
         {
-            TSharedRef<IPropertyHandle> ChildHandle = PassSettingsProperty->GetChildHandle(Index).ToSharedRef();
-            ChildBuilder.AddProperty(ChildHandle).IsEnabled(TAttribute<bool>::Create(TAttribute<bool>::FGetter::CreateLambda(IsEnabledLamda)));
+            uint32 NumChildren;
+            ParentHandle->GetNumChildren(NumChildren);
+            for (uint32 Index = 0; Index < NumChildren; Index++)
+            {
+                TSharedPtr<IPropertyHandle> ChildHandle = ParentHandle->GetChildHandle(Index);
+                if (ChildHandle && ChildHandle->GetProperty() != PassSettingsProperty->GetProperty())
+                {
+                    ChildBuilder.AddProperty(ChildHandle.ToSharedRef()).IsEnabled(TAttribute<bool>::Create(TAttribute<bool>::FGetter::CreateLambda(IsEnabledLamda)));
+                }
+            }
         }
     }
 }
@@ -195,6 +205,42 @@ TSharedPtr<FString> FBufferPostQueueLayerTypeCustomization::GetPassTypeOption(UC
     }
 
     return Result;
+}
+
+TSharedRef<IPropertyTypeCustomization> FBufferRampPassSettingsTypeCustomization::MakeInstance()
+{
+    return MakeShareable(new FBufferRampPassSettingsTypeCustomization);
+}
+
+void FBufferRampPassSettingsTypeCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> PropertyHandle, FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& CustomizationUtils)
+{
+    TArray<const void*> RawData;
+    PropertyHandle->AccessRawData(RawData);
+    if (RawData.Num() == 1)
+    {
+        const FBufferRampPassSettings* RampPassSettings = reinterpret_cast<const FBufferRampPassSettings*>(RawData[0]);
+        if (RampPassSettings)
+        {
+            TSharedRef<IPropertyHandle> RampCurveProperty = PropertyHandle->GetChildHandle(FName(GET_MEMBER_NAME_CHECKED(FBufferRampPassSettings, RampCurve))).ToSharedRef();
+            RampCurveProperty->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda(
+                [RampPassSettings]()
+                {
+                    RampPassSettings->OnRampCurveModified().Broadcast();
+                }
+            ));
+        }
+    }
+}
+
+void FBufferRampPassSettingsTypeCustomization::CustomizeChildren(TSharedRef<IPropertyHandle> PropertyHandle, IDetailChildrenBuilder& ChildBuilder, IPropertyTypeCustomizationUtils& CustomizationUtils)
+{
+    uint32 NumChildren;
+    PropertyHandle->GetNumChildren(NumChildren);
+    for (uint32 Index = 0; Index < NumChildren; Index++)
+    {
+        TSharedPtr<IPropertyHandle> ChildHandle = PropertyHandle->GetChildHandle(Index);
+        ChildBuilder.AddProperty(ChildHandle.ToSharedRef());
+    }
 }
 
 #undef LOCTEXT_NAMESPACE

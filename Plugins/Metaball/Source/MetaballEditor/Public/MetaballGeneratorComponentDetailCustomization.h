@@ -18,4 +18,6 @@ public:
     // IDetailCustomization Interfaces
     //
     virtual void CustomizeDetails(IDetailLayoutBuilder& DetailBuilder) override;
+
+    void OnPostQueueModified(class UMetaballGeneratorComponent* MetaballGenerator);
 };
