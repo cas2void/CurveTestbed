@@ -29,16 +29,16 @@ void UBufferPresentingEditorSubsystem::Deinitialize()
     FWorldDelegates::OnStartGameInstance.RemoveAll(this);
 }
 
-void UBufferPresentingEditorSubsystem::Present(UTextureRenderTarget2D* Buffer)
+void UBufferPresentingEditorSubsystem::Present(UTextureRenderTarget2D* Buffer, bool bIsMonochrome)
 {
     UBufferPresentingGameSubsystem* GameSubsystem;
     if (IsRunningGame(&GameSubsystem))
     {
-        GameSubsystem->Present(Buffer);
+        GameSubsystem->Present(Buffer, bIsMonochrome);
     }
     else
     {
-        PresentInEditingMode(Buffer);
+        PresentInEditingMode(Buffer, bIsMonochrome);
     }
 }
 
@@ -154,10 +154,11 @@ bool UBufferPresentingEditorSubsystem::IsRunningGame(UBufferPresentingGameSubsys
     return Result;
 }
 
-void UBufferPresentingEditorSubsystem::PresentInEditingMode(UTextureRenderTarget2D* Buffer)
+void UBufferPresentingEditorSubsystem::PresentInEditingMode(UTextureRenderTarget2D* Buffer, bool bIsMonochrome)
 {
     BufferPresentingInfrastructure.ImageBrush.SetImageSize(FVector2D(Buffer->SizeX, Buffer->SizeY));
     BufferPresentingInfrastructure.BufferMID->SetTextureParameterValue(FName("Buffer"), Buffer);
+    BufferPresentingInfrastructure.BufferMID->SetScalarParameterValue(FName("IsMonochrome"), bIsMonochrome ? 1.0f : 0.0f);
 
     TSharedPtr<SOverlay> OverlayWidget = FindLevelViewportOverlay();
     if (OverlayWidget.IsValid())

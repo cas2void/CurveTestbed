@@ -14,7 +14,7 @@ float Metaball(float2 Position, float2 Center, float Radius)
 	return Radius / length((Position - Center) * UVStrech);
 }
 
-void MainPS(FScreenVertexOutput Input, out float4 OutColor : SV_Target0)
+void MainPS(FScreenVertexOutput Input, out float OutColor : SV_Target0)
 {
 	float intensity0 = Metaball(Input.UV, Point0.xy, Point0.z);
 	float intensity1 = Metaball(Input.UV, Point1.xy, Point1.z);
@@ -23,5 +23,5 @@ void MainPS(FScreenVertexOutput Input, out float4 OutColor : SV_Target0)
 	float intensity = intensity0 + intensity1 + intensity2;
 	float normalizedIntensity = saturate(intensity);
 
-	OutColor = float4(normalizedIntensity, normalizedIntensity, normalizedIntensity, 1);
+	OutColor = normalizedIntensity;
 }

@@ -33,7 +33,7 @@ void AMetaballCoordinator::BeginPlay()
 	UBufferPresentingGameSubsystem* PresentingSubsystem = GetBufferPresentingSubsystem();
 	if (PresentingSubsystem)
 	{
-		PresentingSubsystem->Present(MetaballGenerator->GetOutput());
+		PresentingSubsystem->Present(MetaballGenerator->GetOutput(), MetaballGenerator->IsOutputMonochrome());
 	}
 }
 
@@ -50,7 +50,7 @@ void AMetaballCoordinator::OnMetaballGeneratorResize(const FIntPoint& Size)
 	UBufferPresentingGameSubsystem* PresentingSubsystem = GetBufferPresentingSubsystem();
 	if (PresentingSubsystem && PresentingSubsystem->IsPresenting())
 	{
-		PresentingSubsystem->Present(MetaballGenerator->GetOutput());
+		PresentingSubsystem->Present(MetaballGenerator->GetOutput(), MetaballGenerator->IsOutputMonochrome());
 	}
 }
 

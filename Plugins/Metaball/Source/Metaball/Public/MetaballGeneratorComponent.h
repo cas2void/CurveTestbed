@@ -35,6 +35,7 @@ public:
     FResizeDelegate& OnResize() { return ResizeDelegate; }
 
     UTextureRenderTarget2D* GetOutput();
+    bool IsOutputMonochrome();
 
 protected:
     // Desired render target size, value set by SetSize() from caller.
@@ -47,12 +48,6 @@ protected:
 
     UPROPERTY(VisibleInstanceOnly, Transient, AdvancedDisplay)
     UTextureRenderTarget2D* OutputRT;
-
-    UPROPERTY(VisibleInstanceOnly, Transient, AdvancedDisplay)
-    UTextureRenderTarget2D* IntermediateRT;
-
-    UPROPERTY(EditAnywhere)
-    FBufferPostQueueSettings PostQueueSettings;
 
     //
     // Metaball

@@ -52,7 +52,7 @@ public:
     // Buffer Presenting
     //
 public:
-    void Present(UTextureRenderTarget2D* Buffer);
+    void Present(UTextureRenderTarget2D* Buffer, bool bIsMonochrome = false);
     void Shutdown();
     bool IsPresenting();
 

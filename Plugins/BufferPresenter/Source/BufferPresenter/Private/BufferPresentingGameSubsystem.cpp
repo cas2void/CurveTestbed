@@ -63,10 +63,11 @@ void UBufferPresentingGameSubsystem::Initialize(FSubsystemCollectionBase& Collec
 void UBufferPresentingGameSubsystem::Deinitialize()
 {}
 
-void UBufferPresentingGameSubsystem::Present(UTextureRenderTarget2D* Buffer)
+void UBufferPresentingGameSubsystem::Present(UTextureRenderTarget2D* Buffer, bool bIsMonochrome)
 {
     BufferPresentingInfrastructure.ImageBrush.SetImageSize(FVector2D(Buffer->SizeX, Buffer->SizeY));
     BufferPresentingInfrastructure.BufferMID->SetTextureParameterValue(FName("Buffer"), Buffer);
+    BufferPresentingInfrastructure.BufferMID->SetScalarParameterValue(FName("IsMonochrome"), bIsMonochrome ? 1.0f : 0.0f);
 
     UWorld* World = GetWorld();
     if (World && World->IsGameWorld())

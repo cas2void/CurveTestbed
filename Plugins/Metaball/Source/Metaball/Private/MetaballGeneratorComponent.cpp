@@ -40,15 +40,13 @@ void UMetaballGeneratorComponent::TickComponent(float DeltaTime, ELevelTick Tick
 void UMetaballGeneratorComponent::SetSize(const FIntPoint& Size)
 {
     if (Size.X > 0 && Size.Y > 0 &&
-        (!OutputRT || OutputRT->SizeX != Size.X || OutputRT->SizeY != Size.Y || 
-            !IntermediateRT || IntermediateRT->SizeX != Size.X || IntermediateRT->SizeY != Size.Y))
+        (!OutputRT || OutputRT->SizeX != Size.X || OutputRT->SizeY != Size.Y))
     {
-        OutputRT = UKismetRenderingLibrary::CreateRenderTarget2D(this, Size.X, Size.Y, RTF_RGBA16f, FLinearColor::Yellow);
-        IntermediateRT = UKismetRenderingLibrary::CreateRenderTarget2D(this, Size.X, Size.Y, RTF_RGBA16f, FLinearColor::Blue);
+        OutputRT = UKismetRenderingLibrary::CreateRenderTarget2D(this, Size.X, Size.Y, RTF_R16f);
         RenderTargetSize = Size;
 
         // RenderTarget could be nullptr, when this function gets called in Constructor, where current World of `this` is nullptr.
-        if (OutputRT && IntermediateRT)
+        if (OutputRT)
         {
             // Reprocess as the size of cooking render target has been changed.
             Process();
@@ -63,6 +61,11 @@ UTextureRenderTarget2D* UMetaballGeneratorComponent::GetOutput()
     return OutputRT;
 }
 
+bool UMetaballGeneratorComponent::IsOutputMonochrome()
+{
+    return true;
+}
+
 void UMetaballGeneratorComponent::Process()
 {
     FMetaballGeneratorShaderParameter ShaderParam;
@@ -72,8 +75,6 @@ void UMetaballGeneratorComponent::Process()
     ShaderParam.AspectRatio = static_cast<float>(OutputRT->SizeX) / static_cast<float>(OutputRT->SizeY);
 
     FMetaballGeneratorShader::RenderMetaball(OutputRT, FIntPoint(OutputRT->SizeX, OutputRT->SizeY), ShaderParam);
-
-    FBufferPostQueue::Process(OutputRT, IntermediateRT, PostQueueSettings);
     
     ProcessDelegate.Broadcast();
 }

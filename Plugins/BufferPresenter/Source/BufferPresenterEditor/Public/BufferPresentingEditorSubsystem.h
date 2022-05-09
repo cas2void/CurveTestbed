@@ -26,7 +26,7 @@ public:
     // Buffer Presenting
     //
 public:
-    void Present(UTextureRenderTarget2D* Buffer);
+    void Present(UTextureRenderTarget2D* Buffer, bool bIsMonochrome = false);
     void Shutdown();
     bool IsPresenting();
 
@@ -35,7 +35,7 @@ protected:
     TSharedPtr<class SWidget> FindChildWidgetOfType(TSharedRef<class SWidget> Widget, const TArray<FString>& TypeStringPath);
     
     bool IsRunningGame(class UBufferPresentingGameSubsystem** OutGameSubsystem = nullptr);
-    void PresentInEditingMode(UTextureRenderTarget2D* Buffer);
+    void PresentInEditingMode(UTextureRenderTarget2D* Buffer, bool bIsMonochrome);
     void ShutdownInEditingMode();
 
     void OnStartGameInstance(class UGameInstance* GameInstance);
