@@ -21,7 +21,6 @@ void MainPS(FScreenVertexOutput Input, out float OutColor : SV_Target0)
 	float intensity2 = Metaball(Input.UV, Point2.xy, Point2.z);
 	
 	float intensity = intensity0 + intensity1 + intensity2;
-	float normalizedIntensity = saturate(intensity);
 
-	OutColor = normalizedIntensity;
+    OutColor = intensity;
 }
