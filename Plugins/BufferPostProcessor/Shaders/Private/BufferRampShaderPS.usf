@@ -1,0 +1,16 @@
+#include "/Engine/Private/Common.ush"
+
+Texture2D InputTexture;
+SamplerState InputTextureSampler;
+Texture2D RampTexture;
+SamplerState RampTextureSampler;
+
+void MainPS(FScreenVertexOutput Input, out float4 OutColor : SV_Target0)
+{
+	float inputIntensity = InputTexture.Sample(InputTextureSampler, Input.UV).r;
+	float normalizedIntensity = saturate(inputIntensity);
+
+	float2 colorRampUV = float2(normalizedIntensity, 0);
+	float4 rampedColor = RampTexture.Sample(RampTextureSampler, colorRampUV);
+	OutColor = rampedColor;
+}
